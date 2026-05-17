@@ -48,24 +48,22 @@
                 {#each scheduleArtists.sort((a, b) => a.startTime.localeCompare(b.startTime)) as artist}
                     {@const key = artistKey(artist)}
                     {@const myRating = authStore.ratings[key] ?? 0}
-                    <div class="card preset-filled-surface-100-900 p-4 flex items-center gap-4">
-                        <div class="text-center shrink-0 w-12">
+                    <div class="card preset-tonal-primary p-4 flex items-center gap-4">
+                        <div class="">
                             <p class="font-mono text-sm font-bold">{artist.startTime}</p>
-                            <p class="text-xs text-surface-400">{artist.stage}</p>
+                            <p class="text-sm opacity-80">{artist.stage}</p>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <p class="font-semibold leading-tight">{artist.name}</p>
-                            <p class="text-sm text-surface-500">{artist.genre}</p>
+                            <p class="font-semibold">{artist.name}</p>
+                            <p class="text-sm opacity-50">{artist.genre}</p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-4">
                             {#if myRating > 0}
-                                <span class="text-warning-500 text-sm">{'★'.repeat(myRating)}</span>
+                                <span class="text-sm">{'★'.repeat(myRating)}</span>
                             {/if}
-                            <button
-                                    onclick={() => authStore.toggleSchedule(key)}
-                                    class="btn btn-sm preset-tonal-error text-xs"
-                                    aria-label="Remove {artist.name} from schedule"
-                            >
+                            <button onclick={() => authStore.toggleSchedule(key)}
+                                    class="btn-icon btn-icon-sm preset-tonal-error"
+                                    aria-label="Remove {artist.name} from schedule">
                                 ✕
                             </button>
                         </div>
