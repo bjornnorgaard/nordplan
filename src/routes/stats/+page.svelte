@@ -73,8 +73,8 @@
 </script>
 
 <Seo
-	title="Group Stats"
-	description="See which NorthSide 2026 artists are most popular in your group. Aggregated ratings from all members."
+	title="Stats"
+	description="See which NorthSide 2026 artists are most popular. Aggregated ratings from all members."
 	noindex={true}
 />
 
