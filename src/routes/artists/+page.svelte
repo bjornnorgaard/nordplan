@@ -50,12 +50,12 @@
         />
     </div>
 
-    <div class="space-y-2">
+    <div class="space-y-4">
         {#each filtered as artist}
             {@const key = artistKey(artist)}
             {@const myRating = authStore.ratings[key] ?? 0}
             {@const inSchedule = authStore.schedule.includes(key)}
-            <div class="card preset-filled-surface-100-900 p-4 flex flex-col gap-1">
+            <div class="card preset-tonal-primary p-4 flex flex-col gap-1">
                 <div class="flex items-start justify-between gap-2">
                     <div class="min-w-0">
                         <p class="font-semibold leading-tight">{artist.name}</p>
