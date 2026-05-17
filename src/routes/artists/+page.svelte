@@ -82,7 +82,7 @@
         />
     </div>
 
-    <div class="space-y-4">
+    <div class="space-y-2">
         {#each filtered as artist}
             {@const key = artistKey(artist)}
             {@const myRating = authStore.ratings[key] ?? 0}
