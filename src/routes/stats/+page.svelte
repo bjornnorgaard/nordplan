@@ -7,11 +7,27 @@
 	let allRatings = $state<Record<string, Record<string, number>>>({});
 	let loading = $state(true);
 	let selectedDay = $state('Thursday');
+	let loadError = $state<string | null>(null);
 
 	onMount(async () => {
-		allRatings = await loadAllRatings();
-		loading = false;
+		try {
+			allRatings = await loadAllRatings();
+			loadError = null;
+		} catch (error) {
+			console.error('Failed to load group ratings', error);
+			loadError = 'Could not load group ratings right now. Please try again.';
+			allRatings = {};
+		} finally {
+			loading = false;
+		}
 	});
+
+	function toValidRating(value: unknown): number | null {
+		if (typeof value !== 'number' || !Number.isFinite(value)) return null;
+		const normalized = Math.round(value);
+		if (normalized < 1 || normalized > 5) return null;
+		return normalized;
+	}
 
 	type ArtistStat = {
 		name: string;
@@ -31,8 +47,8 @@
 			.map((a) => {
 				const key = artistKey(a);
 				const userRatings = Object.values(allRatings)
-					.map((r) => r[key])
-					.filter((r) => r !== undefined && r > 0);
+					.map((r) => toValidRating(r[key]))
+					.filter((r): r is number => r !== null);
 				const average =
 					userRatings.length > 0
 						? userRatings.reduce((sum, r) => sum + r, 0) / userRatings.length
@@ -45,7 +61,7 @@
 					averageRating: average,
 					raterCount: userRatings.length,
 					totalRaters: Object.keys(allRatings).length,
-					myRating: authStore.ratings[key] ?? 0,
+					myRating: toValidRating(authStore.ratings[key]) ?? 0,
 					artistKey: key
 				};
 			})
@@ -62,6 +78,8 @@
 
 	{#if loading}
 		<p class="text-center text-surface-400 py-8">Loading ratings…</p>
+	{:else if loadError}
+		<p class="text-center text-error-500 py-8">{loadError}</p>
 	{:else}
 		<p class="text-sm text-surface-400">{Object.keys(allRatings).length} group member(s) have rated artists.</p>
 
@@ -88,6 +106,7 @@
 				<button
 					onclick={() => (selectedDay = day)}
 					class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+					aria-pressed={selectedDay === day}
 				>
 					{day}
 				</button>

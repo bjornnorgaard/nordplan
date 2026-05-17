@@ -31,6 +31,7 @@
 				<button
 					onclick={() => (selectedDay = day)}
 					class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+					aria-pressed={selectedDay === day}
 				>
 					{day} {count > 0 ? `(${count})` : ''}
 				</button>
