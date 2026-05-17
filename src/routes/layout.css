@@ -1,0 +1,4 @@
+@import 'tailwindcss';
+@import 'node_modules/@skeletonlabs/skeleton/src/index.css';
+@import 'node_modules/@skeletonlabs/skeleton/src/themes/cerberus.css';
+@import 'node_modules/@skeletonlabs/skeleton-svelte/dist/index.css';
