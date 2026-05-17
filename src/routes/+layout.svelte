@@ -49,7 +49,7 @@
         </header>
     {/if}
 
-    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-8 bg-linear-to-br from-surface-50-950 to-primary-50-950">
+    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-8">
         {#if authStore.loading}
             <div class="flex items-center justify-center h-40">
                 <span class="text-surface-400">Loading…</span>
