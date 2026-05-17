@@ -36,7 +36,9 @@
                 </a>
                 <nav class="order-3 w-full flex flex-wrap gap-4 text-sm sm:order-0 sm:w-auto">
                     {#each navItems as item}
-                        <a href={item.href} class="hover:underline {page.url.pathname === item.href ? 'underline' : ''}" aria-current={page.url.pathname === item.href ? 'page' : undefined}>
+                        <a href={item.href}
+                           class:underline={page.url.pathname === item.href}
+                           aria-current={page.url.pathname === item.href ? 'page' : undefined}>
                             {item.label}
                         </a>
                     {/each}
