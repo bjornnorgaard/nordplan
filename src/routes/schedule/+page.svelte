@@ -1,12 +1,18 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
-    import {artists, days, artistKey} from '$lib/data/artists';
+    import {artists, days, stages, artistKey} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
 
     let selectedDay = $state('Thursday');
+    let selectedStage = $state('All scenes');
 
     let scheduleArtists = $derived(
-        artists.filter((a) => authStore.schedule.includes(artistKey(a)) && a.day === selectedDay)
+        artists.filter(
+            (a) =>
+                authStore.schedule.includes(artistKey(a)) &&
+                a.day === selectedDay &&
+                (selectedStage === 'All scenes' || a.stage === selectedStage)
+        )
     );
 
     let scheduleCount = $derived(authStore.schedule.length);
@@ -41,8 +47,29 @@
             {/each}
         </div>
 
+        <div class="flex flex-wrap gap-2">
+            <button onclick={() => (selectedStage = 'All scenes')}
+                    class="btn btn-sm"
+                    class:preset-filled-secondary-500={selectedStage === 'All scenes'}
+                    class:preset-tonal-surface={selectedStage !== 'All scenes'}
+                    aria-pressed={selectedStage === 'All scenes'}>
+                All scenes
+            </button>
+            {#each stages as stage}
+                <button onclick={() => (selectedStage = stage)}
+                        class="btn btn-sm"
+                        class:preset-filled-secondary-500={selectedStage === stage}
+                        class:preset-tonal-surface={selectedStage !== stage}
+                        aria-pressed={selectedStage === stage}>
+                    {stage}
+                </button>
+            {/each}
+        </div>
+
         {#if scheduleArtists.length === 0}
-            <p class="text-center text-surface-400 py-8">No artists from {selectedDay} in your schedule.</p>
+            <p class="text-center text-surface-400 py-8">
+                No artists from {selectedDay}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''} in your schedule.
+            </p>
         {:else}
             <div class="space-y-2">
                 {#each scheduleArtists.sort((a, b) => a.startTime.localeCompare(b.startTime)) as artist}
