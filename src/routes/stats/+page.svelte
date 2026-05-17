@@ -105,13 +105,11 @@
             </div>
         {/if}
 
-        <div class="flex gap-2">
+        <div class="flex gap-4">
             {#each days as day}
-                <button
-                        onclick={() => (selectedDay = day)}
+                <button onclick={() => (selectedDay = day)}
                         class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
-                        aria-pressed={selectedDay === day}
-                >
+                        aria-pressed={selectedDay === day}>
                     {day}
                 </button>
             {/each}
