@@ -55,7 +55,7 @@
             {@const key = artistKey(artist)}
             {@const myRating = authStore.ratings[key] ?? 0}
             {@const inSchedule = authStore.schedule.includes(key)}
-            <div class="card preset-tonal-primary p-4 flex flex-col gap-1">
+            <div class="card preset-tonal-primary p-4 flex flex-col gap-2">
                 <div class="flex items-start justify-between">
                     <div class="min-w-0">
                         <p class="font-semibold leading-tight">{artist.name}</p>
@@ -67,11 +67,10 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between mt-1">
+                <div class="flex items-center justify-between">
                     <div class="flex gap-1" aria-label="Rate {artist.name}">
                         {#each [1, 2, 3, 4, 5] as star}
-                            <button
-                                    onclick={() => handleRating(key, star)}
+                            <button onclick={() => handleRating(key, star)}
                                     class="text-xl leading-none transition-transform hover:scale-110 {star <= myRating ? 'text-warning-500' : 'text-surface-300'}"
                                     aria-pressed={star === myRating}
                                     aria-label="Rate {artist.name} {star} star{star > 1 ? 's' : ''}"
@@ -79,10 +78,10 @@
                             </button>
                         {/each}
                     </div>
-                    <button
-                            onclick={() => authStore.toggleSchedule(key)}
-                            class="btn btn-sm {inSchedule ? 'preset-filled-success-500' : 'preset-tonal-surface'} text-xs"
-                    >
+                    <button onclick={() => authStore.toggleSchedule(key)}
+                            class="btn btn-sm"
+                            class:preset-filled-success-500={inSchedule}
+                            class:preset-tonal={!inSchedule}>
                         {inSchedule ? '✓ In schedule' : '+ Schedule'}
                     </button>
                 </div>
