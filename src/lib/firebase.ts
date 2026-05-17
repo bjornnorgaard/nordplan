@@ -42,7 +42,7 @@ export async function signOutUser() {
 }
 
 export async function saveRatings(userId: string, ratings: Record<string, number>) {
-	await setDoc(doc(db, 'ratings', userId), ratings);
+	await setDoc(doc(db, 'ratings', userId), ratings, { merge: true });
 }
 
 export async function loadRatings(userId: string): Promise<Record<string, number>> {
