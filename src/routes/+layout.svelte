@@ -30,6 +30,7 @@
 					{#each navItems as item}
 						<a
 							href={item.href}
+							aria-current={$page.url.pathname === item.href ? 'page' : undefined}
 							class="hover:underline {$page.url.pathname === item.href ? 'underline' : ''}"
 						>
 							{item.label}
