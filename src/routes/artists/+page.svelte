@@ -2,6 +2,7 @@
     import Seo from '$lib/Seo.svelte';
     import {artists, days, artistKey} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
+    import {RatingGroup} from '@skeletonlabs/skeleton-svelte';
 
     let selectedDay = $state('Thursday');
     let searchQuery = $state('');
@@ -19,6 +20,16 @@
     function handleRating(key: string, rating: number) {
         const current = authStore.ratings[key] ?? 0;
         authStore.setRating(key, current === rating ? 0 : rating);
+    }
+
+    function clearRatingOnRepeatClick(event: MouseEvent, key: string, rating: number) {
+        const current = authStore.ratings[key] ?? 0;
+        if (current !== rating) return;
+
+        // Stop default item selection so an already-selected value can toggle off.
+        event.preventDefault();
+        event.stopPropagation();
+        authStore.setRating(key, 0);
     }
 </script>
 
@@ -67,17 +78,24 @@
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between">
-                    <div class="flex gap-1" aria-label="Rate {artist.name}">
-                        {#each [1, 2, 3, 4, 5] as star}
-                            <button onclick={() => handleRating(key, star)}
-                                    class="text-xl leading-none transition-transform hover:scale-110 {star <= myRating ? 'text-warning-500' : 'text-surface-300'}"
-                                    aria-pressed={star === myRating}
-                                    aria-label="Rate {artist.name} {star} star{star > 1 ? 's' : ''}"
-                            >★
-                            </button>
-                        {/each}
-                    </div>
+                <div class="flex items-center justify-between gap-2">
+                    <RatingGroup count={5}
+                                 value={myRating}
+                                 onValueChange={(details) => handleRating(key, details.value)}>
+                        <RatingGroup.Label class="sr-only">Rate {artist.name}</RatingGroup.Label>
+                        <RatingGroup.Control>
+                            <RatingGroup.Context>
+                                {#snippet children(ratingGroup)}
+                                    <div class="flex gap-1">
+                                        {#each ratingGroup().items as index (index)}
+                                            <RatingGroup.Item index={index} onclick={(event) => clearRatingOnRepeatClick(event, key, index)}/>
+                                        {/each}
+                                    </div>
+                                {/snippet}
+                            </RatingGroup.Context>
+                        </RatingGroup.Control>
+                        <RatingGroup.HiddenInput/>
+                    </RatingGroup>
                     <button onclick={() => authStore.toggleSchedule(key)}
                             class="btn btn-sm"
                             class:preset-filled-success-500={inSchedule}
