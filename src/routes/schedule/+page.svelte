@@ -20,7 +20,7 @@
 <div class="space-y-4">
     <div class="flex items-baseline justify-between">
         <h2 class="text-2xl font-bold">My Schedule</h2>
-        <span class="text-sm text-surface-400">{scheduleCount} total</span>
+        <span class="text-sm opacity-50">{scheduleCount} total</span>
     </div>
 
     {#if scheduleCount === 0}
@@ -29,14 +29,13 @@
             <p class="text-sm mt-1">Go to Artists and tap <em>+ Schedule</em> to add artists.</p>
         </div>
     {:else}
-        <div class="flex gap-2">
+        <div class="flex gap-4">
             {#each days as day}
                 {@const count = artists.filter((a) => authStore.schedule.includes(artistKey(a)) && a.day === day).length}
-                <button
-                        onclick={() => (selectedDay = day)}
-                        class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
-                        aria-pressed={selectedDay === day}
-                >
+                <button onclick={() => (selectedDay = day)} class="btn btn-sm"
+                        class:preset-filled-primary-500={selectedDay === day}
+                        class:preset-tonal-surface={selectedDay !== day}
+                        aria-pressed={selectedDay === day}>
                     {day} {count > 0 ? `(${count})` : ''}
                 </button>
             {/each}
