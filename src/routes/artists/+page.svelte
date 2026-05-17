@@ -4,20 +4,42 @@
     import {authStore} from '$lib/stores.svelte';
     import {RatingGroup} from '@skeletonlabs/skeleton-svelte';
 
+    function timeToMinutes(time: string): number {
+        const [hours, minutes] = time.split(':').map(Number);
+        return hours * 60 + minutes;
+    }
+
+    function minutesToTime(totalMinutes: number): string {
+        const safeMinutes = Math.min(Math.max(totalMinutes, 0), 23 * 60 + 59);
+        const hours = Math.floor(safeMinutes / 60);
+        const minutes = safeMinutes % 60;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+
     let selectedDay = $state('Thursday');
     let selectedStage = $state('All scenes');
     let searchQuery = $state('');
+    let simulatedNowMinutes = $state(18 * 60);
+    const assumedSetDurationMinutes = 60;
 
     let filtered = $derived(
-        artists.filter(
-            (a) =>
-                a.day === selectedDay &&
-                (selectedStage === 'All scenes' || a.stage === selectedStage) &&
-                (searchQuery === '' ||
-                    a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    a.genre.toLowerCase().includes(searchQuery.toLowerCase()))
-        )
+        artists
+            .filter(
+                (a) =>
+                    a.day === selectedDay &&
+                    (selectedStage === 'All scenes' || a.stage === selectedStage) &&
+                    (searchQuery === '' ||
+                        a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        a.genre.toLowerCase().includes(searchQuery.toLowerCase()))
+            )
+            .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime) || a.name.localeCompare(b.name))
     );
+
+    let nowLabel = $derived(minutesToTime(simulatedNowMinutes));
+    let nowInsertIndex = $derived(
+        filtered.findIndex((artist) => timeToMinutes(artist.startTime) + assumedSetDurationMinutes > simulatedNowMinutes)
+    );
+    let normalizedNowInsertIndex = $derived(nowInsertIndex === -1 ? filtered.length : nowInsertIndex);
 
     function handleRating(key: string, rating: number) {
         const current = authStore.ratings[key] ?? 0;
@@ -80,20 +102,59 @@
                placeholder="Search artists or genres…"
                bind:value={searchQuery}
         />
+
+        <div class="card preset-filled-surface-100-900 p-3 space-y-2">
+            <div class="flex items-center justify-between gap-2">
+                <p class="text-sm font-medium">Debug now</p>
+                <p class="badge preset-tonal-primary text-xs">{selectedDay} {nowLabel}</p>
+            </div>
+            <input
+                    class="w-full"
+                    type="range"
+                    min="720"
+                    max="1439"
+                    step="1"
+                    bind:value={simulatedNowMinutes}
+            />
+        </div>
     </div>
 
     <div class="space-y-2">
-        {#each filtered as artist}
+        {#each filtered as artist, index}
+            {#if index === normalizedNowInsertIndex}
+                <div class="card preset-filled-primary-500 p-3">
+                    <p class="text-sm font-semibold">Now: {nowLabel}</p>
+                    <p class="text-xs opacity-80">Artists below are likely still playing or upcoming.</p>
+                </div>
+            {/if}
+
             {@const key = artistKey(artist)}
             {@const myRating = authStore.ratings[key] ?? 0}
             {@const inSchedule = authStore.schedule.includes(key)}
-            <div class="card preset-tonal-primary p-4 flex flex-col gap-2">
+            {@const isPlayed = index < normalizedNowInsertIndex}
+            {@const artistStartMinutes = timeToMinutes(artist.startTime)}
+            {@const isLikelyPlaying =
+                artistStartMinutes <= simulatedNowMinutes &&
+                artistStartMinutes + assumedSetDurationMinutes > simulatedNowMinutes}
+            <div class="card p-4 flex flex-col gap-2"
+                 class:preset-tonal-surface={isPlayed}
+                 class:preset-tonal-primary={!isPlayed}
+                 class:opacity-75={isPlayed}
+                 class:ring-1={isLikelyPlaying}
+                 class:ring-primary-500={isLikelyPlaying}>
                 <div class="flex items-start justify-between">
                     <div class="min-w-0">
-                        <p class="font-semibold leading-tight">{artist.name}</p>
+                        <div class="flex items-center gap-2">
+                            <p class="font-semibold leading-tight">{artist.name}</p>
+                            {#if isLikelyPlaying}
+                                <span class="badge preset-tonal text-xs uppercase tracking-wide">Playing now</span>
+                            {/if}
+                        </div>
                         <p class="text-xs opacity-60">{artist.genre}</p>
                     </div>
-                    <div class="flex text-right text-xs opacity-70 gap-2 uppercase badge preset-tonal-primary">
+                    <div class="flex text-right text-xs opacity-70 gap-2 uppercase badge"
+                         class:preset-tonal-primary={!isPlayed}
+                         class:preset-tonal-surface={isPlayed}>
                         <p>{artist.startTime}</p>
                         <p class="font-bold">{artist.stage}</p>
                     </div>
@@ -126,6 +187,13 @@
                 </div>
             </div>
         {/each}
+
+        {#if filtered.length > 0 && normalizedNowInsertIndex === filtered.length}
+            <div class="card preset-filled-primary-500 p-3">
+                <p class="text-sm font-semibold">Now: {nowLabel}</p>
+                <p class="text-xs opacity-80">All artists in this list have already played.</p>
+            </div>
+        {/if}
 
         {#if filtered.length === 0}
             <p class="text-center text-surface-400 py-8">No artists found.</p>
