@@ -14,7 +14,7 @@
 
 <Seo
 	title="My Schedule"
-	description="Your personal festival schedule. See all the artists you've saved, sorted by day and time."
+	description="Your personal NorthSide 2026 schedule. See all the artists you've saved, sorted by day and time."
 	noindex={true}
 />
 
