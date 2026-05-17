@@ -30,22 +30,25 @@ mobile first and primary
    rules_version = '2';
    service cloud.firestore {
      match /databases/{database}/documents {
-       match /ratings/{userId} {
-         allow read: if request.auth != null;
-         allow write: if request.auth != null && request.auth.uid == userId;
-       }
-       match /schedules/{userId} {
-         allow read, write: if request.auth != null && request.auth.uid == userId;
-       }
-     }
-   }
-   ```
+        match /ratings/{userId} {
+          allow read: if request.auth != null;
+          allow write: if request.auth != null
+            && request.auth.uid == userId
+            && request.resource.data.values().hasOnly([1, 2, 3, 4, 5]);
+        }
+        match /schedules/{userId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
+      }
+    }
+    ```
+   Add a key allow-list check if you want to restrict rating keys to specific artists only.
 
 4. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   Fill in your Firebase config values in `.env`.
+    ```bash
+    cp .env.example .env
+    ```
+   Fill in your Firebase config values in `.env` (including measurement ID if enabled).
 
 5. **Run locally**
    ```bash
