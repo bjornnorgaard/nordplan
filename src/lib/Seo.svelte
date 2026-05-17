@@ -24,7 +24,7 @@
 	let {
 		title,
 		titleFull = false,
-		description = 'Rate artists, build your personal schedule and see what your group is excited about at the festival.',
+		description = 'Your NorthSide 2026 planner — rate artists, build your personal schedule, and see what your group is excited about.',
 		canonical,
 		ogImage = '/og-image.png',
 		ogType = 'website',

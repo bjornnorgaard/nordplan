@@ -24,7 +24,7 @@
 
 <Seo
 	title="Artists"
-	description="Browse and rate all festival artists by day. Add favourites to your personal schedule."
+	description="Browse and rate all NorthSide 2026 artists by day. Add favourites to your personal schedule."
 	noindex={true}
 />
 

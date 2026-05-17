@@ -27,7 +27,7 @@
 
 <Seo
 	title="Sign in"
-	description="Sign in to NordPlan to rate festival artists, build your personal schedule, and see your group's favourites."
+	description="Sign in to NordPlan to rate NorthSide 2026 artists, build your personal schedule, and see your group's favourites."
 />
 
 <div class="flex flex-col items-center justify-center min-h-[60vh] gap-6">
@@ -36,12 +36,12 @@
 			<span class="text-4xl font-bold">NordPlan</span>
 			<span class="text-xs font-medium uppercase tracking-[0.08em] text-surface-500">by bear</span>
 		</h1>
-		<p class="text-surface-500 text-lg">Rate artists and build your festival schedule</p>
+		<p class="text-surface-500 text-lg">Plan your NorthSide 2026 festival experience</p>
 	</div>
 
 	<div class="card preset-filled-surface-100-900 p-8 w-full max-w-sm space-y-4">
 		<p class="text-center text-surface-600-300 text-sm">
-			Sign in to rate artists, build your schedule, and see what your group is listening to.
+			Sign in to rate NorthSide 2026 artists, build your schedule, and see what your group is listening to.
 		</p>
 
 		<button
