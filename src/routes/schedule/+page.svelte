@@ -48,7 +48,7 @@
                 {#each scheduleArtists.sort((a, b) => a.startTime.localeCompare(b.startTime)) as artist}
                     {@const key = artistKey(artist)}
                     {@const myRating = authStore.ratings[key] ?? 0}
-                    <div class="card preset-filled-surface-100-900 p-4 flex items-center gap-3">
+                    <div class="card preset-filled-surface-100-900 p-4 flex items-center gap-4">
                         <div class="text-center shrink-0 w-12">
                             <p class="font-mono text-sm font-bold">{artist.startTime}</p>
                             <p class="text-xs text-surface-400">{artist.stage}</p>
