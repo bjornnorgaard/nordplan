@@ -1,4 +1,5 @@
-# nordplan
+# NordPlan
+*by Bear*
 Web app for rating festival artists and creating a schedule
 
 # usage

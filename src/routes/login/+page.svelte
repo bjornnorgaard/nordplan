@@ -26,7 +26,10 @@
 
 <div class="flex flex-col items-center justify-center min-h-[60vh] gap-6">
 	<div class="text-center space-y-2">
-		<h1 class="text-4xl font-bold">nordplan 🎵</h1>
+		<h1 class="flex items-baseline justify-center gap-2">
+			<span class="text-4xl font-bold">NordPlan</span>
+			<span class="text-xs font-medium uppercase tracking-[0.08em] text-surface-500">by bear</span>
+		</h1>
 		<p class="text-surface-500 text-lg">Rate artists and build your festival schedule</p>
 	</div>
 

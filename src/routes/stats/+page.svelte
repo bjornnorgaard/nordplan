@@ -71,7 +71,7 @@
 	let groupHighlights = $derived(stats.filter((s) => s.raterCount >= 2).slice(0, 5));
 </script>
 
-<svelte:head><title>Group Stats – nordplan</title></svelte:head>
+<svelte:head><title>Group Stats - NordPlan</title></svelte:head>
 
 <div class="space-y-4">
 	<h2 class="text-2xl font-bold">Group Stats</h2>

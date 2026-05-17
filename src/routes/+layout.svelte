@@ -25,7 +25,10 @@
 	{#if authStore.user}
 		<header class="bg-primary-500 text-white shadow-sm">
 			<div class="max-w-2xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
-				<a href="/artists" class="font-bold text-lg tracking-tight">nordplan 🎵</a>
+				<a href="/artists" class="flex items-baseline gap-1 font-bold tracking-tight">
+					<span class="text-lg">NordPlan</span>
+					<span class="text-[0.65rem] font-medium uppercase tracking-[0.08em] opacity-75">by bear</span>
+				</a>
 				<nav class="order-3 w-full flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium sm:order-none sm:w-auto">
 					{#each navItems as item}
 						<a

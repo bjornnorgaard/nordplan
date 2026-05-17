@@ -21,7 +21,7 @@
 	}
 </script>
 
-<svelte:head><title>Artists – nordplan</title></svelte:head>
+<svelte:head><title>Artists - NordPlan</title></svelte:head>
 
 <div class="space-y-4">
 	<h2 class="text-2xl font-bold">Artists</h2>

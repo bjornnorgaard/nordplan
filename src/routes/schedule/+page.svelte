@@ -11,7 +11,7 @@
 	let scheduleCount = $derived(authStore.schedule.length);
 </script>
 
-<svelte:head><title>My Schedule – nordplan</title></svelte:head>
+<svelte:head><title>My Schedule - NordPlan</title></svelte:head>
 
 <div class="space-y-4">
 	<div class="flex items-baseline justify-between">
