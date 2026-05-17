@@ -28,7 +28,7 @@
 
 <div class="min-h-screen bg-surface-50-950 text-surface-950-50 flex flex-col">
     {#if authStore.user}
-        <header class="bg-primary-500 text-white">
+        <header class="bg-primary-500 text-white drop-shadow-2xl">
             <div class="max-w-2xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
                 <a href="/artists" class="flex items-baseline gap-2 font-bold tracking-tight">
                     <span class="text-xl">NordPlan</span>
@@ -49,7 +49,7 @@
         </header>
     {/if}
 
-    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+    <main class="flex-1 max-w-2xl mx-auto w-full px-4 py-6 bg-linear-to-br from-surface-50-950 to-primary-50-950">
         {#if authStore.loading}
             <div class="flex items-center justify-center h-40">
                 <span class="text-surface-400">Loading…</span>
