@@ -29,7 +29,7 @@
 <div class="min-h-screen bg-surface-50-950 text-surface-950-50 flex flex-col">
     {#if authStore.user}
         <header class="bg-primary-500 text-white">
-            <div class="max-w-2xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+            <div class="max-w-2xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
                 <a href="/artists" class="flex items-baseline gap-1 font-bold tracking-tight">
                     <span class="text-lg">NordPlan</span>
                     <span class="text-[0.65rem] font-medium uppercase tracking-[0.08em] opacity-75">by bear</span>
