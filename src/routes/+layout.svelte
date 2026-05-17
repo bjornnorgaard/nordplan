@@ -38,8 +38,7 @@
                     {#each navItems as item}
                         <a href={item.href}
                            class="chip"
-                           class:preset-outlined-primary-500={page.url.pathname !== item.href}
-                           class:preset-outlined={page.url.pathname === item.href}
+                           class:preset-tonal-primary={page.url.pathname === item.href}
                            aria-current={page.url.pathname === item.href ? 'page' : undefined}>
                             {item.label}
                         </a>
