@@ -24,18 +24,34 @@ function createAuthStore() {
 
 	async function setRating(artistKey: string, rating: number) {
 		if (!user) return;
-		ratings = { ...ratings, [artistKey]: rating };
-		await saveRatings(user.uid, ratings);
+		const uid = user.uid;
+		const previousRatings = ratings;
+		const nextRatings = { ...ratings, [artistKey]: rating };
+		ratings = nextRatings;
+
+		try {
+			await saveRatings(uid, nextRatings);
+		} catch (error) {
+			ratings = previousRatings;
+			console.error('Failed to save ratings', error);
+		}
 	}
 
 	async function toggleSchedule(artistKey: string) {
 		if (!user) return;
-		if (schedule.includes(artistKey)) {
-			schedule = schedule.filter((k) => k !== artistKey);
-		} else {
-			schedule = [...schedule, artistKey];
+		const uid = user.uid;
+		const previousSchedule = schedule;
+		const nextSchedule = schedule.includes(artistKey)
+			? schedule.filter((k) => k !== artistKey)
+			: [...schedule, artistKey];
+		schedule = nextSchedule;
+
+		try {
+			await saveSchedule(uid, nextSchedule);
+		} catch (error) {
+			schedule = previousSchedule;
+			console.error('Failed to save schedule', error);
 		}
-		await saveSchedule(user.uid, schedule);
 	}
 
 	return {
