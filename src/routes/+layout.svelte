@@ -34,7 +34,7 @@
                     <span class="text-xl">NordPlan</span>
                     <span class="text-xs uppercase tracking-widest opacity-50">by bear</span>
                 </a>
-                <nav class="order-3 w-full flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium sm:order-0 sm:w-auto">
+                <nav class="order-3 w-full flex flex-wrap gap-4 text-sm sm:order-0 sm:w-auto">
                     {#each navItems as item}
                         <a href={item.href} class="hover:underline {page.url.pathname === item.href ? 'underline' : ''}" aria-current={page.url.pathname === item.href ? 'page' : undefined}>
                             {item.label}
