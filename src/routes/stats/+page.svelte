@@ -25,14 +25,22 @@
 		artistKey: string;
 	};
 
+	function normalizeRating(rating: unknown): number | null {
+		if (typeof rating !== 'number' || !Number.isFinite(rating)) {
+			return null;
+		}
+
+		return Math.min(5, Math.max(1, rating));
+	}
+
 	let stats = $derived<ArtistStat[]>(
 		artists
 			.filter((a) => a.day === selectedDay)
 			.map((a) => {
 				const key = artistKey(a);
 				const userRatings = Object.values(allRatings)
-					.map((r) => r[key])
-					.filter((r) => r !== undefined && r > 0);
+					.map((r) => normalizeRating(r[key]))
+					.filter((r): r is number => r !== null);
 				const average =
 					userRatings.length > 0
 						? userRatings.reduce((sum, r) => sum + r, 0) / userRatings.length
