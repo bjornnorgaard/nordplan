@@ -44,7 +44,7 @@
         {#if scheduleArtists.length === 0}
             <p class="text-center text-surface-400 py-8">No artists from {selectedDay} in your schedule.</p>
         {:else}
-            <div class="space-y-4">
+            <div class="space-y-2">
                 {#each scheduleArtists.sort((a, b) => a.startTime.localeCompare(b.startTime)) as artist}
                     {@const key = artistKey(artist)}
                     {@const myRating = authStore.ratings[key] ?? 0}
