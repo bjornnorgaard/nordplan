@@ -59,9 +59,9 @@
                 <div class="flex items-start justify-between">
                     <div class="min-w-0">
                         <p class="font-semibold leading-tight">{artist.name}</p>
-                        <p class="text-sm text-surface-500">{artist.genre}</p>
+                        <p class="text-xs opacity-50">{artist.genre}</p>
                     </div>
-                    <div class="text-right text-xs text-surface-400 shrink-0">
+                    <div class="text-right text-sm opacity-75">
                         <p>{artist.stage}</p>
                         <p>{artist.startTime}</p>
                     </div>
