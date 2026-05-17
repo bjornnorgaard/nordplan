@@ -56,7 +56,7 @@
             {@const myRating = authStore.ratings[key] ?? 0}
             {@const inSchedule = authStore.schedule.includes(key)}
             <div class="card preset-tonal-primary p-4 flex flex-col gap-1">
-                <div class="flex items-start justify-between gap-2">
+                <div class="flex items-start justify-between">
                     <div class="min-w-0">
                         <p class="font-semibold leading-tight">{artist.name}</p>
                         <p class="text-sm text-surface-500">{artist.genre}</p>
