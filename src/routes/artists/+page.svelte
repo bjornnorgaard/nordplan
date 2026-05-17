@@ -30,8 +30,8 @@
 <div class="space-y-4">
     <h2 class="text-2xl font-bold">Artists</h2>
 
-    <div class="flex flex-col gap-3">
-        <div class="flex gap-2">
+    <div class="flex flex-col gap-4">
+        <div class="flex gap-4">
             {#each days as day}
                 <button onclick={() => (selectedDay = day)}
                         class="btn btn-sm"
