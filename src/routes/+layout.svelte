@@ -36,9 +36,7 @@
                 </a>
                 <nav class="order-3 w-full flex flex-wrap gap-4 text-sm sm:order-0 sm:w-auto">
                     {#each navItems as item}
-                        <a href={item.href}
-                           class="chip"
-                           class:preset-tonal-primary={page.url.pathname === item.href}
+                        <a href={item.href} class:preset-tonal-primary={page.url.pathname === item.href}
                            aria-current={page.url.pathname === item.href ? 'page' : undefined}>
                             {item.label}
                         </a>
