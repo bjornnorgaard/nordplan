@@ -72,9 +72,9 @@
                         <p class="font-semibold leading-tight">{artist.name}</p>
                         <p class="text-xs opacity-60">{artist.genre}</p>
                     </div>
-                    <div class="text-right text-xs opacity-80">
-                        <p>{artist.stage}</p>
+                    <div class="flex text-right text-xs opacity-70 gap-2 uppercase badge preset-tonal-primary">
                         <p>{artist.startTime}</p>
+                        <p class="font-bold">{artist.stage}</p>
                     </div>
                 </div>
 
