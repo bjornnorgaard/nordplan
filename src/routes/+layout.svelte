@@ -28,7 +28,7 @@
 
 <div class="min-h-screen bg-surface-50-950 text-surface-950-50 flex flex-col">
     {#if authStore.user}
-        <header class="bg-primary-500 text-white shadow-sm">
+        <header class="bg-primary-500 text-white">
             <div class="max-w-2xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
                 <a href="/artists" class="flex items-baseline gap-1 font-bold tracking-tight">
                     <span class="text-lg">NordPlan</span>
@@ -41,7 +41,7 @@
                         </a>
                     {/each}
                 </nav>
-                <button onclick={signOutUser} class="btn btn-sm preset-tonal-surface text-white border border-white/30">
+                <button onclick={signOutUser} class="btn btn-sm">
                     Sign out
                 </button>
             </div>
