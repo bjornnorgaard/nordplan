@@ -7,17 +7,32 @@ function createAuthStore() {
 	let loading = $state(true);
 	let ratings = $state<Record<string, number>>({});
 	let schedule = $state<string[]>([]);
+	let authLoadVersion = 0;
 
 	if (browser) {
 		onAuthStateChanged(auth, async (u) => {
-			user = u;
+			const currentLoadVersion = ++authLoadVersion;
+			loading = true;
+
 			if (u) {
-				ratings = await loadRatings(u.uid);
-				schedule = await loadSchedule(u.uid);
+				const [nextRatings, nextSchedule] = await Promise.all([
+					loadRatings(u.uid),
+					loadSchedule(u.uid)
+				]);
+
+				if (currentLoadVersion !== authLoadVersion) return;
+
+				user = u;
+				ratings = nextRatings;
+				schedule = nextSchedule;
 			} else {
+				if (currentLoadVersion !== authLoadVersion) return;
+
+				user = null;
 				ratings = {};
 				schedule = [];
 			}
+
 			loading = false;
 		});
 	}
