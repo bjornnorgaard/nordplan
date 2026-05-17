@@ -117,11 +117,11 @@
 
         <div class="space-y-2">
             {#each stats as s}
-                <div class="card preset-filled-surface-100-900 p-3">
-                    <div class="flex items-start justify-between gap-2">
+                <div class="card preset-tonal p-4">
+                    <div class="flex items-start justify-between gap-4">
                         <div class="min-w-0">
-                            <p class="font-semibold leading-tight text-sm">{s.name}</p>
-                            <p class="text-xs text-surface-500">{s.genre} · {s.stage} {s.startTime}</p>
+                            <p class="font-semibold leading-tight">{s.name}</p>
+                            <p class="text-xs opacity-50">{s.genre} · {s.stage} {s.startTime}</p>
                         </div>
                         <div class="text-right shrink-0">
                             {#if s.averageRating > 0}
