@@ -5,6 +5,7 @@
 	import { browser } from '$app/environment';
 	import { authStore } from '$lib/stores.svelte';
 	import { signOutUser } from '$lib/firebase';
+	import faviconByBear from '$lib/assets/favicon/favicon-bybear.png';
 
 	let { children } = $props();
 
@@ -20,6 +21,10 @@
 		}
 	});
 </script>
+
+<svelte:head>
+	<link rel="icon" type="image/png" href={faviconByBear} />
+</svelte:head>
 
 <div class="min-h-screen bg-surface-50-950 text-surface-950-50 flex flex-col">
 	{#if authStore.user}
