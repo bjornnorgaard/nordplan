@@ -19,8 +19,18 @@
     let selectedDay = $state('Thursday');
     let selectedStage = $state('All scenes');
     let searchQuery = $state('');
-    let simulatedNowMinutes = $state(18 * 60);
+    let nowMinutes = $state(new Date().getHours() * 60 + new Date().getMinutes());
+    let currentWeekday = $state(new Date().toLocaleDateString('en-US', {weekday: 'long'}));
     const assumedSetDurationMinutes = 60;
+
+    $effect(() => {
+        const intervalId = setInterval(() => {
+            nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
+            currentWeekday = new Date().toLocaleDateString('en-US', {weekday: 'long'});
+        }, 60_000);
+
+        return () => clearInterval(intervalId);
+    });
 
     let filtered = $derived(
         artists
@@ -35,10 +45,9 @@
             .sort((a, b) => timeToMinutes(a.startTime) - timeToMinutes(b.startTime) || a.name.localeCompare(b.name))
     );
 
-    let nowLabel = $derived(minutesToTime(simulatedNowMinutes));
-    let nowInsertIndex = $derived(
-        filtered.findIndex((artist) => timeToMinutes(artist.startTime) + assumedSetDurationMinutes > simulatedNowMinutes)
-    );
+    let nowLabel = $derived(minutesToTime(nowMinutes));
+    let showNowInsert = $derived(currentWeekday === selectedDay);
+    let nowInsertIndex = $derived(filtered.findIndex((artist) => timeToMinutes(artist.startTime) + assumedSetDurationMinutes > nowMinutes));
     let normalizedNowInsertIndex = $derived(nowInsertIndex === -1 ? filtered.length : nowInsertIndex);
 
     function handleRating(key: string, rating: number) {
@@ -102,26 +111,11 @@
                placeholder="Search artists or genres…"
                bind:value={searchQuery}
         />
-
-        <div class="card preset-filled-surface-100-900 p-3 space-y-2">
-            <div class="flex items-center justify-between gap-2">
-                <p class="text-sm font-medium">Debug now</p>
-                <p class="badge preset-tonal-primary text-xs">{selectedDay} {nowLabel}</p>
-            </div>
-            <input
-                    class="w-full"
-                    type="range"
-                    min="720"
-                    max="1439"
-                    step="1"
-                    bind:value={simulatedNowMinutes}
-            />
-        </div>
     </div>
 
     <div class="space-y-2">
         {#each filtered as artist, index}
-            {#if index === normalizedNowInsertIndex}
+            {#if showNowInsert && index === normalizedNowInsertIndex}
                 <div class="card preset-filled-primary-500 p-3">
                     <p class="text-sm font-semibold">Now: {nowLabel}</p>
                     <p class="text-xs opacity-80">Artists below are likely still playing or upcoming.</p>
@@ -133,9 +127,7 @@
             {@const inSchedule = authStore.schedule.includes(key)}
             {@const isPlayed = index < normalizedNowInsertIndex}
             {@const artistStartMinutes = timeToMinutes(artist.startTime)}
-            {@const isLikelyPlaying =
-                artistStartMinutes <= simulatedNowMinutes &&
-                artistStartMinutes + assumedSetDurationMinutes > simulatedNowMinutes}
+            {@const isLikelyPlaying = artistStartMinutes <= nowMinutes && artistStartMinutes + assumedSetDurationMinutes > nowMinutes}
             <div class="card p-4 flex flex-col gap-2"
                  class:preset-tonal-surface={isPlayed}
                  class:preset-tonal-primary={!isPlayed}
@@ -188,7 +180,7 @@
             </div>
         {/each}
 
-        {#if filtered.length > 0 && normalizedNowInsertIndex === filtered.length}
+        {#if showNowInsert && filtered.length > 0 && normalizedNowInsertIndex === filtered.length}
             <div class="card preset-filled-primary-500 p-3">
                 <p class="text-sm font-semibold">Now: {nowLabel}</p>
                 <p class="text-xs opacity-80">All artists in this list have already played.</p>
