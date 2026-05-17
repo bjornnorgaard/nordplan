@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/Seo.svelte';
 	import { onMount } from 'svelte';
 	import { artists, days, artistKey } from '$lib/data/artists';
 	import { loadAllRatings } from '$lib/firebase';
@@ -71,7 +72,11 @@
 	let groupHighlights = $derived(stats.filter((s) => s.raterCount >= 2).slice(0, 5));
 </script>
 
-<svelte:head><title>Group Stats - NordPlan</title></svelte:head>
+<Seo
+	title="Group Stats"
+	description="See which artists are most popular in your group. Aggregated ratings from all members."
+	noindex={true}
+/>
 
 <div class="space-y-4">
 	<h2 class="text-2xl font-bold">Group Stats</h2>

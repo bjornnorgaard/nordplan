@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/Seo.svelte';
 	import { artists, days, artistKey } from '$lib/data/artists';
 	import { authStore } from '$lib/stores.svelte';
 
@@ -21,7 +22,11 @@
 	}
 </script>
 
-<svelte:head><title>Artists - NordPlan</title></svelte:head>
+<Seo
+	title="Artists"
+	description="Browse and rate all festival artists by day. Add favourites to your personal schedule."
+	noindex={true}
+/>
 
 <div class="space-y-4">
 	<h2 class="text-2xl font-bold">Artists</h2>

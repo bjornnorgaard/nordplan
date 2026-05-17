@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/Seo.svelte';
 	import { artists, days, artistKey } from '$lib/data/artists';
 	import { authStore } from '$lib/stores.svelte';
 
@@ -11,7 +12,11 @@
 	let scheduleCount = $derived(authStore.schedule.length);
 </script>
 
-<svelte:head><title>My Schedule - NordPlan</title></svelte:head>
+<Seo
+	title="My Schedule"
+	description="Your personal festival schedule. See all the artists you've saved, sorted by day and time."
+	noindex={true}
+/>
 
 <div class="space-y-4">
 	<div class="flex items-baseline justify-between">

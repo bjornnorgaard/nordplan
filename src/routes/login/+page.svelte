@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Seo from '$lib/Seo.svelte';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { authStore } from '$lib/stores.svelte';
@@ -23,6 +24,11 @@
 		}
 	}
 </script>
+
+<Seo
+	title="Sign in"
+	description="Sign in to NordPlan to rate festival artists, build your personal schedule, and see your group's favourites."
+/>
 
 <div class="flex flex-col items-center justify-center min-h-[60vh] gap-6">
 	<div class="text-center space-y-2">
