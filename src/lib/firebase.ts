@@ -17,8 +17,11 @@ import {
 	PUBLIC_FIREBASE_PROJECT_ID,
 	PUBLIC_FIREBASE_STORAGE_BUCKET,
 	PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-	PUBLIC_FIREBASE_APP_ID
+	PUBLIC_FIREBASE_APP_ID,
+	PUBLIC_FIREBASE_MEASUREMENT_ID
 } from '$env/static/public';
+import { browser } from '$app/environment';
+import { getAnalytics, isSupported, type Analytics } from 'firebase/analytics';
 
 const firebaseConfig = {
 	apiKey: PUBLIC_FIREBASE_API_KEY,
@@ -26,14 +29,24 @@ const firebaseConfig = {
 	projectId: PUBLIC_FIREBASE_PROJECT_ID,
 	storageBucket: PUBLIC_FIREBASE_STORAGE_BUCKET,
 	messagingSenderId: PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-	appId: PUBLIC_FIREBASE_APP_ID
+	appId: PUBLIC_FIREBASE_APP_ID,
+	measurementId: PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-export { auth, db };
+let analytics: Analytics | null = null;
+
+// Analytics is only available in supported browser environments.
+if (browser) {
+	void isSupported().then((supported) => {
+		if (supported) analytics = getAnalytics(app);
+	});
+}
+
+export { auth, db, analytics };
 
 export async function signInWithGoogle() {
 	const provider = new GoogleAuthProvider();
