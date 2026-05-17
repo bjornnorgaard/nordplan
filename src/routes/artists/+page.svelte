@@ -1,16 +1,18 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
-    import {artists, days, artistKey} from '$lib/data/artists';
+    import {artists, days, stages, artistKey} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
     import {RatingGroup} from '@skeletonlabs/skeleton-svelte';
 
     let selectedDay = $state('Thursday');
+    let selectedStage = $state('All scenes');
     let searchQuery = $state('');
 
     let filtered = $derived(
         artists.filter(
             (a) =>
                 a.day === selectedDay &&
+                (selectedStage === 'All scenes' || a.stage === selectedStage) &&
                 (searchQuery === '' ||
                     a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     a.genre.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -50,6 +52,25 @@
                         class:preset-tonal-surface={selectedDay !== day}
                         aria-pressed={selectedDay === day}>
                     {day}
+                </button>
+            {/each}
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+            <button onclick={() => (selectedStage = 'All scenes')}
+                    class="btn btn-sm"
+                    class:preset-filled-secondary-500={selectedStage === 'All scenes'}
+                    class:preset-tonal-surface={selectedStage !== 'All scenes'}
+                    aria-pressed={selectedStage === 'All scenes'}>
+                All scenes
+            </button>
+            {#each stages as stage}
+                <button onclick={() => (selectedStage = stage)}
+                        class="btn btn-sm"
+                        class:preset-filled-secondary-500={selectedStage === stage}
+                        class:preset-tonal-surface={selectedStage !== stage}
+                        aria-pressed={selectedStage === stage}>
+                    {stage}
                 </button>
             {/each}
         </div>
