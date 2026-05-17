@@ -1,4 +1,4 @@
 @import 'tailwindcss';
-@import '@skeletonlabs/skeleton/src/index.css';
-@import '@skeletonlabs/skeleton/src/themes/cerberus.css';
-@import '@skeletonlabs/skeleton-svelte/dist/index.css';
+@import '@skeletonlabs/skeleton';
+@import '@skeletonlabs/skeleton/themes/cerberus';
+@import '@skeletonlabs/skeleton-svelte';

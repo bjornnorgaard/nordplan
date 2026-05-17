@@ -32,6 +32,7 @@
 				<button
 					onclick={() => (selectedDay = day)}
 					class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+					aria-pressed={selectedDay === day}
 				>
 					{day}
 				</button>
@@ -69,7 +70,8 @@
 							<button
 								onclick={() => handleRating(key, star)}
 								class="text-xl leading-none transition-transform hover:scale-110 {star <= myRating ? 'text-warning-500' : 'text-surface-300'}"
-								aria-label="{star} star"
+								aria-pressed={star === myRating}
+								aria-label="Rate {artist.name} {star} star{star > 1 ? 's' : ''}"
 							>★</button>
 						{/each}
 					</div>

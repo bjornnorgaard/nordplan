@@ -1,79 +1,108 @@
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { browser } from '$app/environment';
-import { auth, loadRatings, loadSchedule, saveRatings, saveSchedule } from '$lib/firebase';
+import {
+	auth,
+	loadRatings,
+	loadSchedule,
+	saveRating,
+	addScheduleArtist,
+	removeScheduleArtist
+} from '$lib/firebase';
 
 function createAuthStore() {
 	let user = $state<User | null>(null);
 	let loading = $state(true);
 	let ratings = $state<Record<string, number>>({});
 	let schedule = $state<string[]>([]);
-	let authLoadVersion = 0;
+	let authLoadId = 0;
 
 	if (browser) {
 		onAuthStateChanged(auth, async (u) => {
-			const currentLoadVersion = ++authLoadVersion;
-			loading = true;
+			const currentAuthLoadId = ++authLoadId;
+			user = u;
+			if (!u) {
+				ratings = {};
+				schedule = [];
+				loading = false;
+				return;
+			}
 
-			if (u) {
-				const [nextRatings, nextSchedule] = await Promise.all([
+			loading = true;
+			try {
+				const [loadedRatings, loadedSchedule] = await Promise.all([
 					loadRatings(u.uid),
 					loadSchedule(u.uid)
 				]);
-
-				if (currentLoadVersion !== authLoadVersion) return;
-
-				user = u;
-				ratings = nextRatings;
-				schedule = nextSchedule;
-			} else {
-				if (currentLoadVersion !== authLoadVersion) return;
-
-				user = null;
+				if (currentAuthLoadId !== authLoadId) return;
+				ratings = loadedRatings;
+				schedule = loadedSchedule;
+			} catch (error) {
+				if (currentAuthLoadId !== authLoadId) return;
+				console.error('Failed to load user state from Firestore', error);
 				ratings = {};
 				schedule = [];
+			} finally {
+				if (currentAuthLoadId === authLoadId) {
+					loading = false;
+				}
 			}
-
-			loading = false;
 		});
 	}
 
 	async function setRating(artistKey: string, rating: number) {
 		if (!user) return;
-		const uid = user.uid;
+
 		const previousRatings = ratings;
-		const nextRatings = { ...ratings, [artistKey]: rating };
+		const nextRatings = { ...ratings };
+		if (rating > 0) {
+			nextRatings[artistKey] = rating;
+		} else {
+			delete nextRatings[artistKey];
+		}
 		ratings = nextRatings;
 
 		try {
-			await saveRatings(uid, nextRatings);
+			await saveRating(user.uid, artistKey, rating);
 		} catch (error) {
+			console.error('Failed to save rating', error);
 			ratings = previousRatings;
-			console.error('Failed to save ratings', error);
 		}
 	}
 
 	async function toggleSchedule(artistKey: string) {
 		if (!user) return;
-		const uid = user.uid;
+
 		const previousSchedule = schedule;
-		const nextSchedule = schedule.includes(artistKey)
+		const isInSchedule = schedule.includes(artistKey);
+		schedule = isInSchedule
 			? schedule.filter((k) => k !== artistKey)
 			: [...schedule, artistKey];
-		schedule = nextSchedule;
 
 		try {
-			await saveSchedule(uid, nextSchedule);
+			if (isInSchedule) {
+				await removeScheduleArtist(user.uid, artistKey);
+			} else {
+				await addScheduleArtist(user.uid, artistKey);
+			}
 		} catch (error) {
-			schedule = previousSchedule;
 			console.error('Failed to save schedule', error);
+			schedule = previousSchedule;
 		}
 	}
 
 	return {
-		get user() { return user; },
-		get loading() { return loading; },
-		get ratings() { return ratings; },
-		get schedule() { return schedule; },
+		get user() {
+			return user;
+		},
+		get loading() {
+			return loading;
+		},
+		get ratings() {
+			return ratings;
+		},
+		get schedule() {
+			return schedule;
+		},
 		setRating,
 		toggleSchedule
 	};

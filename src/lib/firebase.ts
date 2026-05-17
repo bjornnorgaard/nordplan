@@ -6,7 +6,10 @@ import {
 	setDoc,
 	getDoc,
 	getDocs,
-	collection
+	collection,
+	deleteField,
+	arrayUnion,
+	arrayRemove
 } from 'firebase/firestore';
 import {
 	PUBLIC_FIREBASE_API_KEY,
@@ -41,8 +44,12 @@ export async function signOutUser() {
 	await signOut(auth);
 }
 
-export async function saveRatings(userId: string, ratings: Record<string, number>) {
-	await setDoc(doc(db, 'ratings', userId), ratings, { merge: true });
+export async function saveRating(userId: string, artistKey: string, rating: number) {
+	if (Number.isInteger(rating) && rating >= 1 && rating <= 5) {
+		await setDoc(doc(db, 'ratings', userId), { [artistKey]: rating }, { merge: true });
+		return;
+	}
+	await setDoc(doc(db, 'ratings', userId), { [artistKey]: deleteField() }, { merge: true });
 }
 
 export async function loadRatings(userId: string): Promise<Record<string, number>> {
@@ -50,8 +57,12 @@ export async function loadRatings(userId: string): Promise<Record<string, number
 	return snap.exists() ? (snap.data() as Record<string, number>) : {};
 }
 
-export async function saveSchedule(userId: string, schedule: string[]) {
-	await setDoc(doc(db, 'schedules', userId), { artists: schedule });
+export async function addScheduleArtist(userId: string, artistKey: string) {
+	await setDoc(doc(db, 'schedules', userId), { artists: arrayUnion(artistKey) }, { merge: true });
+}
+
+export async function removeScheduleArtist(userId: string, artistKey: string) {
+	await setDoc(doc(db, 'schedules', userId), { artists: arrayRemove(artistKey) }, { merge: true });
 }
 
 export async function loadSchedule(userId: string): Promise<string[]> {
