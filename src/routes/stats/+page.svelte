@@ -78,14 +78,14 @@
 />
 
 <div class="space-y-4">
-    <h2 class="text-2xl font-bold">Group Stats</h2>
+    <h2 class="text-2xl font-bold">Artist Stats</h2>
 
     {#if loading}
         <p class="text-center text-surface-400 py-8">Loading ratings…</p>
     {:else if loadError}
         <p class="text-center text-error-500 py-8">{loadError}</p>
     {:else}
-        <p class="text-sm text-surface-400">{Object.keys(allRatings).length} group member(s) have rated artists.</p>
+        <p class="text-sm text-surface-400">{Object.keys(allRatings).length} member(s) have rated artists.</p>
 
         {#if groupHighlights.length > 0}
             <div class="card preset-filled-primary-100-900 p-4 space-y-2">
