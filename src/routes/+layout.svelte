@@ -24,9 +24,9 @@
 <div class="min-h-screen bg-surface-50-950 text-surface-950-50 flex flex-col">
 	{#if authStore.user}
 		<header class="bg-primary-500 text-white shadow-sm">
-			<div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
+			<div class="max-w-2xl mx-auto px-4 py-3 flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<a href="/artists" class="font-bold text-lg tracking-tight">nordplan 🎵</a>
-				<nav class="flex gap-4 text-sm font-medium">
+				<nav class="flex flex-wrap justify-center gap-4 text-sm font-medium sm:justify-start">
 					{#each navItems as item}
 						<a
 							href={item.href}
