@@ -16,7 +16,7 @@
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
-    let selectedDay = $state('Thursday');
+    let selectedDay = $state('All days');
     let selectedStage = $state('All scenes');
     let searchQuery = $state('');
     let nowMinutes = $state(new Date().getHours() * 60 + new Date().getMinutes());
@@ -36,7 +36,7 @@
         artists
             .filter(
                 (a) =>
-                    a.day === selectedDay &&
+                    (selectedDay === 'All days' || a.day === selectedDay) &&
                     (selectedStage === 'All scenes' || a.stage === selectedStage) &&
                     (searchQuery === '' ||
                         a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -46,7 +46,7 @@
     );
 
     let nowLabel = $derived(minutesToTime(nowMinutes));
-    let showNowInsert = $derived(currentWeekday === selectedDay);
+    let showNowInsert = $derived(selectedDay !== 'All days' && currentWeekday === selectedDay);
     let nowInsertIndex = $derived(filtered.findIndex((artist) => timeToMinutes(artist.startTime) + assumedSetDurationMinutes > nowMinutes));
     let normalizedNowInsertIndex = $derived(nowInsertIndex === -1 ? filtered.length : nowInsertIndex);
 
@@ -76,6 +76,13 @@
 
     <div class="flex flex-col gap-4">
         <div class="flex gap-4">
+            <button onclick={() => (selectedDay = 'All days')}
+                    class="btn btn-sm"
+                    class:preset-filled-primary-500={selectedDay === 'All days'}
+                    class:preset-tonal-surface={selectedDay !== 'All days'}
+                    aria-pressed={selectedDay === 'All days'}>
+                All days
+            </button>
             {#each days as day}
                 <button onclick={() => (selectedDay = day)}
                         class="btn btn-sm"
@@ -125,9 +132,10 @@
             {@const key = artistKey(artist)}
             {@const myRating = authStore.ratings[key] ?? 0}
             {@const inSchedule = authStore.schedule.includes(key)}
-            {@const isPlayed = index < normalizedNowInsertIndex}
+            {@const isPlayed = showNowInsert && index < normalizedNowInsertIndex}
             {@const artistStartMinutes = timeToMinutes(artist.startTime)}
-            {@const isLikelyPlaying = artistStartMinutes <= nowMinutes && artistStartMinutes + assumedSetDurationMinutes > nowMinutes}
+            {@const isLikelyPlaying =
+                showNowInsert && artistStartMinutes <= nowMinutes && artistStartMinutes + assumedSetDurationMinutes > nowMinutes}
             <div class="card p-4 flex flex-col gap-2"
                  class:preset-tonal-surface={isPlayed}
                  class:preset-tonal-primary={!isPlayed}

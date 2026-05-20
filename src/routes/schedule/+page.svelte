@@ -3,14 +3,14 @@
     import {artists, days, stages, artistKey} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
 
-    let selectedDay = $state('Thursday');
+    let selectedDay = $state('All days');
     let selectedStage = $state('All scenes');
 
     let scheduleArtists = $derived(
         artists.filter(
             (a) =>
                 authStore.schedule.includes(artistKey(a)) &&
-                a.day === selectedDay &&
+                (selectedDay === 'All days' || a.day === selectedDay) &&
                 (selectedStage === 'All scenes' || a.stage === selectedStage)
         )
     );
@@ -36,6 +36,12 @@
         </div>
     {:else}
         <div class="flex gap-4">
+            <button onclick={() => (selectedDay = 'All days')} class="btn btn-sm"
+                    class:preset-filled-primary-500={selectedDay === 'All days'}
+                    class:preset-tonal-surface={selectedDay !== 'All days'}
+                    aria-pressed={selectedDay === 'All days'}>
+                All days
+            </button>
             {#each days as day}
                 {@const count = artists.filter((a) => authStore.schedule.includes(artistKey(a)) && a.day === day).length}
                 <button onclick={() => (selectedDay = day)} class="btn btn-sm"
@@ -68,7 +74,7 @@
 
         {#if scheduleArtists.length === 0}
             <p class="text-center text-surface-400 py-8">
-                No artists from {selectedDay}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''} in your schedule.
+                No artists{selectedDay !== 'All days' ? ` from ${selectedDay}` : ''}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''} in your schedule.
             </p>
         {:else}
             <div class="space-y-2">

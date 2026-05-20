@@ -7,7 +7,7 @@
 
     let allRatings = $state<Record<string, Record<string, number>>>({});
     let loading = $state(true);
-    let selectedDay = $state('Thursday');
+    let selectedDay = $state('All days');
     let selectedStage = $state('All scenes');
     let loadError = $state<string | null>(null);
 
@@ -45,7 +45,7 @@
 
     let stats = $derived<ArtistStat[]>(
         artists
-            .filter((a) => a.day === selectedDay && (selectedStage === 'All scenes' || a.stage === selectedStage))
+            .filter((a) => (selectedDay === 'All days' || a.day === selectedDay) && (selectedStage === 'All scenes' || a.stage === selectedStage))
             .map((a) => {
                 const key = artistKey(a);
                 const userRatings = Object.values(allRatings)
@@ -107,6 +107,11 @@
         {/if}
 
         <div class="flex gap-4">
+            <button onclick={() => (selectedDay = 'All days')}
+                    class="btn btn-sm {selectedDay === 'All days' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+                    aria-pressed={selectedDay === 'All days'}>
+                All days
+            </button>
             {#each days as day}
                 <button onclick={() => (selectedDay = day)}
                         class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
@@ -138,7 +143,7 @@
         <div class="space-y-2">
             {#if stats.length === 0}
                 <p class="text-center text-surface-400 py-8">
-                    No artists for {selectedDay}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''}.
+                    No artists{selectedDay !== 'All days' ? ` for ${selectedDay}` : ''}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''}.
                 </p>
             {:else}
                 {#each stats as s}
