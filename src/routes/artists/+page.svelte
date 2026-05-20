@@ -21,12 +21,22 @@
     let searchQuery = $state('');
     let nowMinutes = $state(new Date().getHours() * 60 + new Date().getMinutes());
     let currentWeekday = $state(new Date().toLocaleDateString('en-US', {weekday: 'long'}));
+    let currentMonth = $state(new Date().getMonth());
+    let currentDayOfMonth = $state(new Date().getDate());
     const assumedSetDurationMinutes = 60;
+    const festivalDateByDay: Record<string, number> = {
+        Thursday: 4,
+        Friday: 5,
+        Saturday: 6
+    };
 
     $effect(() => {
         const intervalId = setInterval(() => {
-            nowMinutes = new Date().getHours() * 60 + new Date().getMinutes();
-            currentWeekday = new Date().toLocaleDateString('en-US', {weekday: 'long'});
+            const now = new Date();
+            nowMinutes = now.getHours() * 60 + now.getMinutes();
+            currentWeekday = now.toLocaleDateString('en-US', {weekday: 'long'});
+            currentMonth = now.getMonth();
+            currentDayOfMonth = now.getDate();
         }, 60_000);
 
         return () => clearInterval(intervalId);
@@ -46,7 +56,11 @@
     );
 
     let nowLabel = $derived(minutesToTime(nowMinutes));
-    let showNowInsert = $derived(currentWeekday === selectedDay);
+    let showNowInsert = $derived(
+        currentMonth === 5 &&
+        festivalDateByDay[selectedDay] === currentDayOfMonth &&
+        currentWeekday === selectedDay
+    );
     let nowInsertIndex = $derived(filtered.findIndex((artist) => timeToMinutes(artist.startTime) + assumedSetDurationMinutes > nowMinutes));
     let normalizedNowInsertIndex = $derived(nowInsertIndex === -1 ? filtered.length : nowInsertIndex);
 
@@ -76,7 +90,7 @@
 
     <div class="flex flex-col gap-4">
         <div class="flex gap-4">
-            {#each days as day}
+            {#each days as day (day)}
                 <button onclick={() => (selectedDay = day)}
                         class="btn btn-sm"
                         class:preset-filled-primary-500={selectedDay === day}
@@ -95,7 +109,7 @@
                     aria-pressed={selectedStage === 'All scenes'}>
                 All scenes
             </button>
-            {#each stages as stage}
+            {#each stages as stage (stage)}
                 <button onclick={() => (selectedStage = stage)}
                         class="btn btn-sm"
                         class:preset-filled-secondary-500={selectedStage === stage}
@@ -114,7 +128,7 @@
     </div>
 
     <div class="space-y-2">
-        {#each filtered as artist, index}
+        {#each filtered as artist, index (artistKey(artist))}
             {#if showNowInsert && index === normalizedNowInsertIndex}
                 <div class="card preset-filled-primary-500 p-3">
                     <p class="text-sm font-semibold">Now: {nowLabel}</p>
@@ -125,9 +139,9 @@
             {@const key = artistKey(artist)}
             {@const myRating = authStore.ratings[key] ?? 0}
             {@const inSchedule = authStore.schedule.includes(key)}
-            {@const isPlayed = index < normalizedNowInsertIndex}
+            {@const isPlayed = showNowInsert && index < normalizedNowInsertIndex}
             {@const artistStartMinutes = timeToMinutes(artist.startTime)}
-            {@const isLikelyPlaying = artistStartMinutes <= nowMinutes && artistStartMinutes + assumedSetDurationMinutes > nowMinutes}
+            {@const isLikelyPlaying = showNowInsert && artistStartMinutes <= nowMinutes && artistStartMinutes + assumedSetDurationMinutes > nowMinutes}
             <div class="card p-4 flex flex-col gap-2"
                  class:preset-tonal-surface={isPlayed}
                  class:preset-tonal-primary={!isPlayed}
