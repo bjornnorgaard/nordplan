@@ -1,5 +1,6 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
+    import {onMount} from 'svelte';
     import {artists, days, stages, artistKey} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
     import {RatingGroup} from '@skeletonlabs/skeleton-svelte';
@@ -30,7 +31,7 @@
         Saturday: 6
     };
 
-    $effect(() => {
+    onMount(() => {
         const intervalId = setInterval(() => {
             const now = new Date();
             nowMinutes = now.getHours() * 60 + now.getMinutes();
