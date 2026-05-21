@@ -1,7 +1,7 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
     import {onMount} from 'svelte';
-    import {artists, days, stages, artistKey} from '$lib/data/artists';
+    import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
     import {loadAllRatings} from '$lib/firebase';
     import {authStore} from '$lib/stores.svelte';
 
@@ -33,6 +33,7 @@
 
     type ArtistStat = {
         name: string;
+        day: string;
         stage: string;
         startTime: string;
         genre: string;
@@ -57,6 +58,7 @@
                         : 0;
                 return {
                     name: a.name,
+                    day: a.day,
                     stage: a.stage,
                     startTime: a.startTime,
                     genre: a.genre,
@@ -71,6 +73,7 @@
     );
 
     let groupHighlights = $derived(stats.filter((s) => s.raterCount >= 2).slice(0, 5));
+    let statGroups = $derived(groupByDay(stats, selectedDay));
 </script>
 
 <Seo title="Stats"
@@ -140,32 +143,37 @@
             {/each}
         </div>
 
-        <div class="space-y-2">
+        <div class="space-y-4">
             {#if stats.length === 0}
                 <p class="text-center text-surface-400 py-8">
                     No artists{selectedDay !== 'All days' ? ` for ${selectedDay}` : ''}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''}.
                 </p>
             {:else}
-                {#each stats as s}
-                    <div class="card preset-tonal p-4">
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="min-w-0">
-                                <p class="font-semibold leading-tight">{s.name}</p>
-                                <p class="text-xs opacity-50">{s.genre} · {s.stage} {s.startTime}</p>
-                            </div>
-                            <div class="text-right shrink-0">
-                                {#if s.averageRating > 0}
-                                    <p class="text-warning-500 text-sm">{'★'.repeat(Math.round(s.averageRating))}</p>
-                                    <p class="text-xs text-surface-400">{s.averageRating.toFixed(1)} avg · {s.raterCount}/{s.totalRaters}</p>
-                                {:else}
-                                    <p class="text-xs text-surface-300">Not rated yet</p>
+                {#each statGroups as group (group.day)}
+                    <section class="space-y-2">
+                        <h3 class="text-sm font-semibold uppercase tracking-wide text-surface-400">{group.day}</h3>
+                        {#each group.items as s (s.artistKey)}
+                            <div class="card preset-tonal p-4">
+                                <div class="flex items-start justify-between gap-4">
+                                    <div class="min-w-0">
+                                        <p class="font-semibold leading-tight">{s.name}</p>
+                                        <p class="text-xs opacity-50">{s.genre} · {s.stage} {s.startTime}</p>
+                                    </div>
+                                    <div class="text-right shrink-0">
+                                        {#if s.averageRating > 0}
+                                            <p class="text-warning-500 text-sm">{'★'.repeat(Math.round(s.averageRating))}</p>
+                                            <p class="text-xs text-surface-400">{s.averageRating.toFixed(1)} avg · {s.raterCount}/{s.totalRaters}</p>
+                                        {:else}
+                                            <p class="text-xs text-surface-300">Not rated yet</p>
+                                        {/if}
+                                    </div>
+                                </div>
+                                {#if s.myRating > 0}
+                                    <p class="text-xs text-surface-400 mt-1">You: {'★'.repeat(s.myRating)}</p>
                                 {/if}
                             </div>
-                        </div>
-                        {#if s.myRating > 0}
-                            <p class="text-xs text-surface-400 mt-1">You: {'★'.repeat(s.myRating)}</p>
-                        {/if}
-                    </div>
+                        {/each}
+                    </section>
                 {/each}
             {/if}
         </div>
