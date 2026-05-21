@@ -62,4 +62,13 @@ Layout is **mobile-first**, max width `max-w-2xl mx-auto`. All pages use `<Seo .
 
 Edit `src/lib/data/artists.ts` — add entries to the `artists` array. Stages are `Nova | Astra | Luna | SideShow`; days are `Thursday | Friday | Saturday`. The `days` and `stages` exports are used for filters/rendering — update them if new values are introduced.
 
+## Cursor Cloud specific instructions
+
+**Dev server:** `npm run dev` (Vite). Requires Node.js `^20.19.0 || >=22.12.0`.
+
+**Type-check:** `npm run check` — 0 errors expected.
+
+**Environment:** Copy `.env.example` → `.env`. Requires real Firebase project values (`PUBLIC_FIREBASE_*`) for auth/Firestore to work. Without valid config, the app starts but Google sign-in and data operations fail at runtime. The app is fully client-rendered so no server-side secrets are needed.
+
+**No test framework** — validation is via `npm run check` only.
 
