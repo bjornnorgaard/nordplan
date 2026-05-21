@@ -1,19 +1,26 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
-    import {artists, days, stages, artistKey} from '$lib/data/artists';
+    import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
 
-    let selectedDay = $state('Thursday');
+    let selectedDay = $state('All days');
     let selectedStage = $state('All scenes');
 
     let scheduleArtists = $derived(
-        artists.filter(
-            (a) =>
-                authStore.schedule.includes(artistKey(a)) &&
-                a.day === selectedDay &&
-                (selectedStage === 'All scenes' || a.stage === selectedStage)
-        )
+        artists
+            .filter(
+                (a) =>
+                    authStore.schedule.includes(artistKey(a)) &&
+                    (selectedDay === 'All days' || a.day === selectedDay) &&
+                    (selectedStage === 'All scenes' || a.stage === selectedStage)
+            )
+            .sort(
+                (a, b) =>
+                    days.indexOf(a.day) - days.indexOf(b.day) || a.startTime.localeCompare(b.startTime)
+            )
     );
+
+    let scheduleGroups = $derived(groupByDay(scheduleArtists, selectedDay));
 
     let scheduleCount = $derived(authStore.schedule.length);
 </script>
@@ -36,6 +43,12 @@
         </div>
     {:else}
         <div class="flex gap-4">
+            <button onclick={() => (selectedDay = 'All days')} class="btn btn-sm"
+                    class:preset-filled-primary-500={selectedDay === 'All days'}
+                    class:preset-tonal-surface={selectedDay !== 'All days'}
+                    aria-pressed={selectedDay === 'All days'}>
+                All days
+            </button>
             {#each days as day}
                 {@const count = artists.filter((a) => authStore.schedule.includes(artistKey(a)) && a.day === day).length}
                 <button onclick={() => (selectedDay = day)} class="btn btn-sm"
@@ -68,33 +81,38 @@
 
         {#if scheduleArtists.length === 0}
             <p class="text-center text-surface-400 py-8">
-                No artists from {selectedDay}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''} in your schedule.
+                No artists{selectedDay !== 'All days' ? ` from ${selectedDay}` : ''}{selectedStage !== 'All scenes' ? ` at ${selectedStage}` : ''} in your schedule.
             </p>
         {:else}
-            <div class="space-y-2">
-                {#each scheduleArtists.sort((a, b) => a.startTime.localeCompare(b.startTime)) as artist}
-                    {@const key = artistKey(artist)}
-                    {@const myRating = authStore.ratings[key] ?? 0}
-                    <div class="card preset-tonal-primary p-4 flex items-center gap-4">
-                        <div class="">
-                            <p class="font-mono text-sm font-bold">{artist.startTime}</p>
-                            <p class="text-sm opacity-80">{artist.stage}</p>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="font-semibold">{artist.name}</p>
-                            <p class="text-sm opacity-50">{artist.genre}</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            {#if myRating > 0}
-                                <span class="text-sm">{'★'.repeat(myRating)}</span>
-                            {/if}
-                            <button onclick={() => authStore.toggleSchedule(key)}
-                                    class="btn-icon btn-icon-sm preset-tonal-error"
-                                    aria-label="Remove {artist.name} from schedule">
-                                ✕
-                            </button>
-                        </div>
-                    </div>
+            <div class="space-y-4">
+                {#each scheduleGroups as group (group.day)}
+                    <section class="space-y-2">
+                        <h3 class="text-sm font-semibold uppercase tracking-wide text-surface-400">{group.day}</h3>
+                        {#each group.items as artist (artistKey(artist))}
+                            {@const key = artistKey(artist)}
+                            {@const myRating = authStore.ratings[key] ?? 0}
+                            <div class="card preset-tonal-primary p-4 flex items-center gap-4">
+                                <div class="">
+                                    <p class="font-mono text-sm font-bold">{artist.startTime}</p>
+                                    <p class="text-sm opacity-80">{artist.stage}</p>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="font-semibold">{artist.name}</p>
+                                    <p class="text-sm opacity-50">{artist.genre}</p>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    {#if myRating > 0}
+                                        <span class="text-sm">{'★'.repeat(myRating)}</span>
+                                    {/if}
+                                    <button onclick={() => authStore.toggleSchedule(key)}
+                                            class="btn-icon btn-icon-sm preset-tonal-error"
+                                            aria-label="Remove {artist.name} from schedule">
+                                        ✕
+                                    </button>
+                                </div>
+                            </div>
+                        {/each}
+                    </section>
                 {/each}
             </div>
         {/if}

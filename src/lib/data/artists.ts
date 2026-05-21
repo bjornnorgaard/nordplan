@@ -69,3 +69,13 @@ export const stages = ['Astra', 'Nova', 'Luna', 'SideShow'];
 export function artistKey(artist: Artist): string {
 	return `${artist.name}__${artist.day}__${artist.startTime}`;
 }
+
+export function groupByDay<T extends { day: string }>(
+	items: T[],
+	selectedDay: string = 'All days'
+): { day: string; items: T[] }[] {
+	const dayOrder = selectedDay === 'All days' ? days : [selectedDay];
+	return dayOrder
+		.map((day) => ({ day, items: items.filter((item) => item.day === day) }))
+		.filter((group) => group.items.length > 0);
+}
