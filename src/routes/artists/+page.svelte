@@ -31,6 +31,13 @@
         Saturday: 6
     };
 
+    $effect(() => {
+        if (searchQuery !== '') {
+            selectedDay = 'All days';
+            selectedStage = 'All scenes';
+        }
+    });
+
     onMount(() => {
         const intervalId = setInterval(() => {
             const now = new Date();
