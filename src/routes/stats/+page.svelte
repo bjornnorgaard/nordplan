@@ -162,7 +162,7 @@
                                             <p class="font-semibold leading-tight">{s.name}</p>
                                             <SpotifyArtistLink name={s.name} />
                                         </div>
-                                        <p class="text-xs opacity-50">{s.genre} · {s.stage} {s.startTime}</p>
+                                        <p class="text-xs opacity-50">{s.genre} · {s.stage} · {s.day.slice(0, 3)} {s.startTime}</p>
                                     </div>
                                     <div class="text-right shrink-0">
                                         {#if s.averageRating > 0}

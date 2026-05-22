@@ -190,6 +190,7 @@
                             <div class="flex text-right text-xs opacity-70 gap-2 uppercase badge"
                                  class:preset-tonal-primary={!isPlayed}
                                  class:preset-tonal-surface={isPlayed}>
+                                <p>{artist.day.slice(0, 3)}</p>
                                 <p>{artist.startTime}</p>
                                 <p class="font-bold">{artist.stage}</p>
                             </div>
