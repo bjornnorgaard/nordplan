@@ -2,6 +2,7 @@
     import Seo from '$lib/Seo.svelte';
     import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
+    import SpotifyArtistLink from '$lib/SpotifyArtistLink.svelte';
 
     let selectedDay = $state('All days');
     let selectedStage = $state('All scenes');
@@ -97,7 +98,10 @@
                                     <p class="text-sm opacity-80">{artist.stage}</p>
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <p class="font-semibold">{artist.name}</p>
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-semibold">{artist.name}</p>
+                                        <SpotifyArtistLink name={artist.name} />
+                                    </div>
                                     <p class="text-sm opacity-50">{artist.genre}</p>
                                 </div>
                                 <div class="flex items-center gap-4">

@@ -3,6 +3,7 @@
     import {onMount} from 'svelte';
     import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
+    import SpotifyArtistLink from '$lib/SpotifyArtistLink.svelte';
     import {RatingGroup} from '@skeletonlabs/skeleton-svelte';
 
     function timeToMinutes(time: string): number {
@@ -179,6 +180,7 @@
                             <div class="min-w-0">
                                 <div class="flex items-center gap-2">
                                     <p class="font-semibold leading-tight">{artist.name}</p>
+                                    <SpotifyArtistLink name={artist.name} />
                                     {#if isLikelyPlaying}
                                         <span class="badge preset-tonal text-xs uppercase tracking-wide">Playing now</span>
                                     {/if}
