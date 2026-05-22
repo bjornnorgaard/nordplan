@@ -95,7 +95,7 @@
             <div class="card preset-filled-primary-100-900 p-4 space-y-2">
                 <p class="font-semibold text-sm uppercase tracking-wide">🔥 Group Favourites</p>
                 {#each groupHighlights as s}
-                    <div class="flex items-center justify-between text-sm">
+                    <div class="flex flex-col items-center justify-between text-sm">
                         <div>
                             <span class="font-medium">{s.name}</span>
                             <span class="text-surface-400 ml-1">({s.day.slice(0, 3)}, {s.startTime}, {s.stage})</span>
