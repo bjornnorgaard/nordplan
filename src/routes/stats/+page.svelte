@@ -98,7 +98,7 @@
                     <div class="flex items-center justify-between text-sm">
                         <div>
                             <span class="font-medium">{s.name}</span>
-                            <span class="text-surface-400 ml-1">({s.stage}, {s.startTime})</span>
+                            <span class="text-surface-400 ml-1">({s.day.slice(0, 3)}, {s.startTime}, {s.stage})</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-warning-500">{'★'.repeat(Math.round(s.averageRating))}</span>
