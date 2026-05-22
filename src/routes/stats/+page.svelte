@@ -4,6 +4,7 @@
     import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
     import {loadAllRatings} from '$lib/firebase';
     import {authStore} from '$lib/stores.svelte';
+    import SpotifyArtistLink from '$lib/SpotifyArtistLink.svelte';
 
     let allRatings = $state<Record<string, Record<string, number>>>({});
     let loading = $state(true);
@@ -96,9 +97,10 @@
                 <p class="font-semibold text-sm uppercase tracking-wide">🔥 Group Favourites</p>
                 {#each groupHighlights as s}
                     <div class="flex flex-col items-center justify-between text-sm">
-                        <div>
+                        <div class="flex items-center gap-2">
                             <span class="font-medium">{s.name}</span>
-                            <span class="text-surface-400 ml-1">({s.day.slice(0, 3)}, {s.startTime}, {s.stage})</span>
+                            <SpotifyArtistLink name={s.name} />
+                            <span class="text-surface-400">({s.day.slice(0, 3)}, {s.startTime}, {s.stage})</span>
                         </div>
                         <div class="flex items-center gap-2">
                             <span class="text-warning-500">{'★'.repeat(Math.round(s.averageRating))}</span>
@@ -156,7 +158,10 @@
                             <div class="card preset-tonal p-4">
                                 <div class="flex items-start justify-between gap-4">
                                     <div class="min-w-0">
-                                        <p class="font-semibold leading-tight">{s.name}</p>
+                                        <div class="flex items-center gap-2">
+                                            <p class="font-semibold leading-tight">{s.name}</p>
+                                            <SpotifyArtistLink name={s.name} />
+                                        </div>
                                         <p class="text-xs opacity-50">{s.genre} · {s.stage} {s.startTime}</p>
                                     </div>
                                     <div class="text-right shrink-0">
