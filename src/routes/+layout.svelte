@@ -32,7 +32,7 @@
             <div class="max-w-2xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
                 <a href="/artists" class="flex items-baseline gap-2 font-bold tracking-tight">
                     <span class="text-xl">NordPlan</span>
-                    <span class="text-xs tracking-widest opacity-50">byBear</span>
+                    <span class="text-xs tracking-widest opacity-50">ByBear</span>
                 </a>
                 <nav class="order-3 w-full flex flex-wrap gap-4 text-sm sm:order-0 sm:w-auto">
                     {#each navItems as item}
