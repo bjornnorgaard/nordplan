@@ -93,7 +93,7 @@ export const artists: Artist[] = [
 ];
 
 export const days = ['Thursday', 'Friday', 'Saturday'];
-export const stages = ['Astra', 'Nova', 'Luna', 'SideShow'];
+export const stages = ['Astra', 'Nova', 'Luna', 'SideShow', 'Skovbrynet'];
 
 export function artistKey(artist: Artist): string {
 	return `${artist.name}__${artist.day}__${artist.startTime}`;
