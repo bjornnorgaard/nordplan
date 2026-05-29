@@ -51,7 +51,6 @@
                 All days
             </button>
             {#each days as day}
-                {@const count = artists.filter((a) => authStore.schedule.includes(artistKey(a)) && a.day === day).length}
                 <button onclick={() => (selectedDay = day)} class="btn btn-sm grow"
                         class:preset-filled-tertiary-500={selectedDay === day}
                         class:preset-tonal-tertiary={selectedDay !== day}
