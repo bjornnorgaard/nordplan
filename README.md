@@ -60,3 +60,13 @@ mobile first and primary
    - Push to GitHub and connect the repo in [Vercel](https://vercel.com/)
    - Add the environment variables from `.env` in the Vercel project settings
    - Vercel will auto-deploy on push
+
+## Program validation
+
+Run this to verify that `src/lib/data/artists.ts` matches the current lineup on `https://northside.dk/program/`:
+
+```bash
+npm run validate:program
+```
+
+The script compares `name`, `stage`, `day`, and `startTime` for every entry and exits with code `1` if any discrepancy is found.
