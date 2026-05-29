@@ -111,15 +111,19 @@
             </div>
         {/if}
 
-        <div class="flex gap-4">
+        <div class="flex gap-2">
             <button onclick={() => (selectedDay = 'All days')}
-                    class="btn btn-sm {selectedDay === 'All days' ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+                    class="btn btn-sm"
+                    class:preset-filled-tertiary-500={selectedDay === 'All days'}
+                    class:preset-tonal-tertiary={selectedDay !== 'All days'}
                     aria-pressed={selectedDay === 'All days'}>
                 All days
             </button>
             {#each days as day}
                 <button onclick={() => (selectedDay = day)}
-                        class="btn btn-sm {selectedDay === day ? 'preset-filled-primary-500' : 'preset-tonal-surface'}"
+                        class="btn btn-sm grow"
+                        class:preset-filled-tertiary-500={selectedDay === day}
+                        class:preset-tonal-tertiary={selectedDay !== day}
                         aria-pressed={selectedDay === day}>
                     {day}
                 </button>
@@ -130,15 +134,15 @@
             <button onclick={() => (selectedStage = 'All scenes')}
                     class="btn btn-sm"
                     class:preset-filled-secondary-500={selectedStage === 'All scenes'}
-                    class:preset-tonal-surface={selectedStage !== 'All scenes'}
+                    class:preset-tonal-secondary={selectedStage !== 'All scenes'}
                     aria-pressed={selectedStage === 'All scenes'}>
                 All scenes
             </button>
             {#each stages as stage}
                 <button onclick={() => (selectedStage = stage)}
-                        class="btn btn-sm"
+                        class="btn btn-sm grow"
                         class:preset-filled-secondary-500={selectedStage === stage}
-                        class:preset-tonal-surface={selectedStage !== stage}
+                        class:preset-tonal-secondary={selectedStage !== stage}
                         aria-pressed={selectedStage === stage}>
                     {stage}
                 </button>

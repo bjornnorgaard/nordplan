@@ -43,20 +43,20 @@
             <p class="text-sm mt-1">Go to Artists and tap <em>+ Schedule</em> to add artists.</p>
         </div>
     {:else}
-        <div class="flex gap-4">
+        <div class="flex gap-2">
             <button onclick={() => (selectedDay = 'All days')} class="btn btn-sm"
-                    class:preset-filled-primary-500={selectedDay === 'All days'}
-                    class:preset-tonal-surface={selectedDay !== 'All days'}
+                    class:preset-filled-tertiary-500={selectedDay === 'All days'}
+                    class:preset-tonal-tertiary={selectedDay !== 'All days'}
                     aria-pressed={selectedDay === 'All days'}>
                 All days
             </button>
             {#each days as day}
                 {@const count = artists.filter((a) => authStore.schedule.includes(artistKey(a)) && a.day === day).length}
-                <button onclick={() => (selectedDay = day)} class="btn btn-sm"
-                        class:preset-filled-primary-500={selectedDay === day}
-                        class:preset-tonal-surface={selectedDay !== day}
+                <button onclick={() => (selectedDay = day)} class="btn btn-sm grow"
+                        class:preset-filled-tertiary-500={selectedDay === day}
+                        class:preset-tonal-tertiary={selectedDay !== day}
                         aria-pressed={selectedDay === day}>
-                    {day} {count > 0 ? `(${count})` : ''}
+                    {day}
                 </button>
             {/each}
         </div>
@@ -65,15 +65,15 @@
             <button onclick={() => (selectedStage = 'All scenes')}
                     class="btn btn-sm"
                     class:preset-filled-secondary-500={selectedStage === 'All scenes'}
-                    class:preset-tonal-surface={selectedStage !== 'All scenes'}
+                    class:preset-tonal-secondary={selectedStage !== 'All scenes'}
                     aria-pressed={selectedStage === 'All scenes'}>
                 All scenes
             </button>
             {#each stages as stage}
                 <button onclick={() => (selectedStage = stage)}
-                        class="btn btn-sm"
+                        class="btn btn-sm grow"
                         class:preset-filled-secondary-500={selectedStage === stage}
-                        class:preset-tonal-surface={selectedStage !== stage}
+                        class:preset-tonal-secondary={selectedStage !== stage}
                         aria-pressed={selectedStage === stage}>
                     {stage}
                 </button>
