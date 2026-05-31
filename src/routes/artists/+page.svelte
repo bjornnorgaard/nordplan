@@ -102,7 +102,10 @@
 />
 
 <div class="space-y-4">
-    <h2 class="text-2xl font-bold">Artists</h2>
+    <div class="flex items-baseline justify-between gap-4">
+        <h2 class="text-2xl font-bold">Artists</h2>
+        <a href="/stats" class="anchor">view stats</a>
+    </div>
 
     <div class="flex flex-col gap-4">
         <div class="flex gap-2">
