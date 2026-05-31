@@ -11,8 +11,8 @@
 
     const navItems = [
         {href: '/artists', label: 'Artists'},
+        {href: '/schedule', label: 'My Schedule'},
         {href: '/tidsplan', label: 'Tidsplan'},
-        {href: '/schedule', label: 'My Schedule'}
     ];
 
     $effect(() => {
