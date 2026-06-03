@@ -74,9 +74,9 @@
         </div>
     </div>
 
-    <div class="space-y-3">
+    <div class="space-y-3 p-4">
         {#each dayGroups as group (group.day)}
-            <section class="">
+            <section class="flex flex-col items-center">
                 <h3 class="font-bold uppercase tracking-wider opacity-50">{group.day}</h3>
                 {#each group.items as artist (artistKey(artist))}
                     <p class="text-sm truncate">
