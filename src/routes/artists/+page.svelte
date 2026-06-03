@@ -104,7 +104,10 @@
 <div class="space-y-4">
     <div class="flex items-baseline justify-between gap-4">
         <h2 class="text-2xl font-bold">Artists</h2>
-        <a href="/stats" class="anchor">view stats</a>
+        <div class="flex gap-3 text-sm">
+            <a href="/compact" class="anchor">compact view</a>
+            <a href="/stats" class="anchor">view stats</a>
+        </div>
     </div>
 
     <div class="flex flex-col gap-4">
