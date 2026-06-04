@@ -26,6 +26,7 @@
     let currentMonth = $state(new Date().getMonth());
     let currentDayOfMonth = $state(new Date().getDate());
     const assumedSetDurationMinutes = 60;
+    const finishedBufferMinutes = 15;
     const festivalDateByDay: Record<string, number> = {
         Thursday: 4,
         Friday: 5,
@@ -77,8 +78,21 @@
         festivalDateByDay[selectedDay] === currentDayOfMonth &&
         currentWeekday === selectedDay
     );
-    let nowInsertIndex = $derived(filtered.findIndex((artist) => timeToMinutes(artist.startTime) + assumedSetDurationMinutes > nowMinutes));
-    let normalizedNowInsertIndex = $derived(nowInsertIndex === -1 ? filtered.length : nowInsertIndex);
+
+    function isDefinitelyFinished(startTime: string): boolean {
+        return timeToMinutes(startTime) + assumedSetDurationMinutes + finishedBufferMinutes <= nowMinutes;
+    }
+
+    function isLikelyPlaying(startTime: string): boolean {
+        const startMinutes = timeToMinutes(startTime);
+        return startMinutes <= nowMinutes && startMinutes + assumedSetDurationMinutes > nowMinutes;
+    }
+
+    function splitByFinished(items: typeof artists) {
+        const played = items.filter((artist) => isDefinitelyFinished(artist.startTime));
+        const active = items.filter((artist) => !isDefinitelyFinished(artist.startTime));
+        return {played, active};
+    }
 
     function handleRating(key: string, rating: number) {
         const current = authStore.ratings[key] ?? 0;
@@ -158,89 +172,108 @@
 
     <div class="space-y-4">
         {#each dayGroups as group (group.day)}
+            {@const {played, active} = showNowInsert ? splitByFinished(group.items) : {played: [], active: group.items}}
             <section class="space-y-2">
                 <h3 class="text-sm font-semibold uppercase tracking-wide text-surface-400">{group.day}</h3>
-                {#each group.items as artist (artistKey(artist))}
-                    {@const flatIndex = filtered.indexOf(artist)}
-                    {#if showNowInsert && flatIndex === normalizedNowInsertIndex}
-                        <div class="card preset-filled-primary-500 p-3">
-                            <p class="text-sm font-semibold">Now: {nowLabel}</p>
-                            <p class="text-xs opacity-80">Artists below are likely still playing or upcoming.</p>
-                        </div>
-                    {/if}
 
-                    {@const key = artistKey(artist)}
-                    {@const myRating = authStore.ratings[key] ?? 0}
-                    {@const inSchedule = authStore.schedule.includes(key)}
-                    {@const isPlayed = showNowInsert && flatIndex < normalizedNowInsertIndex}
-                    {@const artistStartMinutes = timeToMinutes(artist.startTime)}
-                    {@const isLikelyPlaying =
-                        showNowInsert && artistStartMinutes <= nowMinutes && artistStartMinutes + assumedSetDurationMinutes > nowMinutes}
-                    <div class="card p-4 flex flex-col gap-2"
-                         class:preset-tonal-surface={isPlayed}
-                         class:preset-tonal-primary={!isPlayed}
-                         class:opacity-75={isPlayed}
-                         class:ring-1={isLikelyPlaying}
-                         class:ring-primary-500={isLikelyPlaying}>
-                        <div class="flex items-start justify-between">
-                            <div class="min-w-0">
-                                <div class="flex items-center gap-2">
-                                    <p class="font-semibold leading-tight">{artist.name}</p>
-                                    <SpotifyArtistLink name={artist.name} />
-                                    {#if isLikelyPlaying}
-                                        <span class="badge preset-tonal text-xs uppercase tracking-wide">Playing now</span>
-                                    {/if}
-                                </div>
-                                <p class="text-xs opacity-60">{artist.genre}</p>
-                            </div>
-                            <div class="flex text-right text-xs opacity-70 gap-2 uppercase badge"
-                                 class:preset-tonal-primary={!isPlayed}
-                                 class:preset-tonal-surface={isPlayed}>
-                                <p>{artist.day.slice(0, 3)}</p>
-                                <p>{artist.startTime}</p>
-                                <p class="font-bold">{artist.stage}</p>
-                            </div>
+                {#if played.length > 0}
+                    <details class="card preset-tonal-surface group">
+                        <summary class="flex cursor-pointer list-none items-center justify-between gap-2 p-3 marker:content-none [&::-webkit-details-marker]:hidden">
+                            <span class="text-sm font-medium">
+                                {played.length} artist{played.length === 1 ? '' : 's'} already played
+                            </span>
+                            <span class="text-xs text-surface-400 group-open:hidden">Show</span>
+                            <span class="text-xs text-surface-400 hidden group-open:inline">Hide</span>
+                        </summary>
+                        <div class="space-y-2 border-t border-surface-200-800 p-2 pt-0">
+                            {#each played as artist (artistKey(artist))}
+                                {@render artistCard(artist, {muted: true})}
+                            {/each}
                         </div>
+                    </details>
+                {/if}
 
-                        <div class="flex items-center justify-between gap-2">
-                            <RatingGroup count={5}
-                                         value={myRating}
-                                         onValueChange={(details) => handleRating(key, details.value)}>
-                                <RatingGroup.Label class="sr-only">Rate {artist.name}</RatingGroup.Label>
-                                <RatingGroup.Control>
-                                    <RatingGroup.Context>
-                                        {#snippet children(ratingGroup)}
-                                            <div class="flex gap-1">
-                                                {#each ratingGroup().items as index (index)}
-                                                    <RatingGroup.Item index={index} onclick={(event) => clearRatingOnRepeatClick(event, key, index)}/>
-                                                {/each}
-                                            </div>
-                                        {/snippet}
-                                    </RatingGroup.Context>
-                                </RatingGroup.Control>
-                                <RatingGroup.HiddenInput/>
-                            </RatingGroup>
-                            <button onclick={() => authStore.toggleSchedule(key)}
-                                    class="btn btn-sm"
-                                    class:preset-filled-success-500={inSchedule}
-                                    class:preset-tonal={!inSchedule}>
-                                {inSchedule ? '✓ In schedule' : '+ Schedule'}
-                            </button>
-                        </div>
+                {#if showNowInsert && active.length > 0}
+                    <div class="card preset-filled-primary-500 p-3">
+                        <p class="text-sm font-semibold">Now: {nowLabel}</p>
+                        <p class="text-xs opacity-80">Artists below are likely still playing or upcoming.</p>
                     </div>
+                {/if}
+
+                {#each active as artist (artistKey(artist))}
+                    {@render artistCard(artist, {muted: false})}
                 {/each}
+
+                {#if showNowInsert && active.length === 0 && played.length > 0}
+                    <div class="card preset-filled-primary-500 p-3">
+                        <p class="text-sm font-semibold">Now: {nowLabel}</p>
+                        <p class="text-xs opacity-80">All artists today have already played.</p>
+                    </div>
+                {/if}
             </section>
         {/each}
-
-        {#if showNowInsert && filtered.length > 0 && normalizedNowInsertIndex === filtered.length}
-            <div class="card preset-filled-primary-500 p-3">
-                <p class="text-sm font-semibold">Now: {nowLabel}</p>
-                <p class="text-xs opacity-80">All artists in this list have already played.</p>
-            </div>
-        {/if}
 
         {#if filtered.length === 0}
             <p class="text-center text-surface-400 py-8">No artists found.</p>
         {/if}
     </div>
 </div>
+
+{#snippet artistCard(artist: (typeof artists)[number], options: {muted: boolean})}
+    {@const key = artistKey(artist)}
+    {@const myRating = authStore.ratings[key] ?? 0}
+    {@const inSchedule = authStore.schedule.includes(key)}
+    {@const likelyPlaying = showNowInsert && !options.muted && isLikelyPlaying(artist.startTime)}
+    <div class="card p-4 flex flex-col gap-2"
+         class:preset-tonal-surface={options.muted}
+         class:preset-tonal-primary={!options.muted}
+         class:opacity-75={options.muted}
+         class:ring-1={likelyPlaying}
+         class:ring-primary-500={likelyPlaying}>
+        <div class="flex items-start justify-between">
+            <div class="min-w-0">
+                <div class="flex items-center gap-2">
+                    <p class="font-semibold leading-tight">{artist.name}</p>
+                    <SpotifyArtistLink name={artist.name} />
+                    {#if likelyPlaying}
+                        <span class="badge preset-tonal text-xs uppercase tracking-wide">Playing now</span>
+                    {/if}
+                </div>
+                <p class="text-xs opacity-60">{artist.genre}</p>
+            </div>
+            <div class="flex text-right text-xs opacity-70 gap-2 uppercase badge"
+                 class:preset-tonal-primary={!options.muted}
+                 class:preset-tonal-surface={options.muted}>
+                <p>{artist.day.slice(0, 3)}</p>
+                <p>{artist.startTime}</p>
+                <p class="font-bold">{artist.stage}</p>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-2">
+            <RatingGroup count={5}
+                         value={myRating}
+                         onValueChange={(details) => handleRating(key, details.value)}>
+                <RatingGroup.Label class="sr-only">Rate {artist.name}</RatingGroup.Label>
+                <RatingGroup.Control>
+                    <RatingGroup.Context>
+                        {#snippet children(ratingGroup)}
+                            <div class="flex gap-1">
+                                {#each ratingGroup().items as index (index)}
+                                    <RatingGroup.Item index={index} onclick={(event) => clearRatingOnRepeatClick(event, key, index)}/>
+                                {/each}
+                            </div>
+                        {/snippet}
+                    </RatingGroup.Context>
+                </RatingGroup.Control>
+                <RatingGroup.HiddenInput/>
+            </RatingGroup>
+            <button onclick={() => authStore.toggleSchedule(key)}
+                    class="btn btn-sm"
+                    class:preset-filled-success-500={inSchedule}
+                    class:preset-tonal={!inSchedule}>
+                {inSchedule ? '✓ In schedule' : '+ Schedule'}
+            </button>
+        </div>
+    </div>
+{/snippet}
