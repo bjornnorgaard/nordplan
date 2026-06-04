@@ -1,7 +1,7 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
     import {onMount} from 'svelte';
-    import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
+    import {artists, days, stages, artistKey, groupByDay, festivalDateByDay, defaultSelectedDay} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
     import SpotifyArtistLink from '$lib/SpotifyArtistLink.svelte';
     import {RatingGroup} from '@skeletonlabs/skeleton-svelte';
@@ -18,7 +18,7 @@
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
-    let selectedDay = $state('All days');
+    let selectedDay = $state(defaultSelectedDay());
     let selectedStage = $state('All scenes');
     let searchQuery = $state('');
     let nowMinutes = $state(new Date().getHours() * 60 + new Date().getMinutes());
@@ -27,12 +27,6 @@
     let currentDayOfMonth = $state(new Date().getDate());
     const assumedSetDurationMinutes = 60;
     const finishedBufferMinutes = 15;
-    const festivalDateByDay: Record<string, number> = {
-        Thursday: 4,
-        Friday: 5,
-        Saturday: 6
-    };
-
     $effect(() => {
         if (searchQuery !== '') {
             selectedDay = 'All days';

@@ -1,14 +1,14 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
     import {onMount} from 'svelte';
-    import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
+    import {artists, days, stages, artistKey, groupByDay, defaultSelectedDay} from '$lib/data/artists';
     import {loadAllRatings} from '$lib/firebase';
     import {authStore} from '$lib/stores.svelte';
     import SpotifyArtistLink from '$lib/SpotifyArtistLink.svelte';
 
     let allRatings = $state<Record<string, Record<string, number>>>({});
     let loading = $state(true);
-    let selectedDay = $state('All days');
+    let selectedDay = $state(defaultSelectedDay());
     let selectedStage = $state('All scenes');
     let loadError = $state<string | null>(null);
 

@@ -1,10 +1,10 @@
 <script lang="ts">
     import Seo from '$lib/Seo.svelte';
-    import {artists, days, stages, artistKey, groupByDay} from '$lib/data/artists';
+    import {artists, days, stages, artistKey, groupByDay, defaultSelectedDay} from '$lib/data/artists';
     import {authStore} from '$lib/stores.svelte';
     import SpotifyArtistLink from '$lib/SpotifyArtistLink.svelte';
 
-    let selectedDay = $state('All days');
+    let selectedDay = $state(defaultSelectedDay());
     let selectedStage = $state('All scenes');
 
     let scheduleArtists = $derived(

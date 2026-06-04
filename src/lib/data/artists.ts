@@ -95,6 +95,24 @@ export const artists: Artist[] = [
 export const days = ['Thursday', 'Friday', 'Saturday'];
 export const stages = ['Astra', 'Nova', 'Luna', 'SideShow', 'Skovbrynet'];
 
+export const festivalDateByDay: Record<(typeof days)[number], number> = {
+	Thursday: 4,
+	Friday: 5,
+	Saturday: 6
+};
+
+/** Default day filter: current festival day during NorthSide (June 4–6), otherwise "All days". */
+export function defaultSelectedDay(now: Date = new Date()): string {
+	const weekday = now.toLocaleDateString('en-US', { weekday: 'long' });
+	if (!days.includes(weekday)) return 'All days';
+	const month = now.getMonth();
+	const dayOfMonth = now.getDate();
+	if (month === 5 && festivalDateByDay[weekday as (typeof days)[number]] === dayOfMonth) {
+		return weekday;
+	}
+	return 'All days';
+}
+
 export function artistKey(artist: Artist): string {
 	return `${artist.name}__${artist.day}__${artist.startTime}`;
 }
